@@ -8,7 +8,6 @@ export default function App() {
     <div>
       <h1>{t("dashboard.title")}</h1>
       <p>{t("common.welcome")}</p>
-      {/* test  */}
       <LangSwitcher />
     </div>
   );
