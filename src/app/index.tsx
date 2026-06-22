@@ -1,1 +1,32 @@
-// createBrowserRouter (Routes only)
+import { createBrowserRouter, Navigate } from "react-router-dom";
+
+import KanbanBoard from "@/components/projects/tasks/kanban-board";
+import ProjectTabPlaceholder from "@/components/projects/project-tab-placeholder";
+import DashboardPage from "./routes/DashboardPage";
+import PlaceholderPage from "./routes/PlaceholderPage";
+import ProjectLayout from "./routes/ProjectLayout";
+
+export const router = createBrowserRouter([
+  { path: "/", element: <Navigate to="/projects" replace /> },
+  { path: "/dashboard", element: <DashboardPage /> },
+  {
+    path: "/projects",
+    element: <Navigate to="/projects/alpha/tasks" replace />,
+  },
+  {
+    path: "/projects/:projectId",
+    element: <ProjectLayout />,
+    children: [
+      { index: true, element: <Navigate to="tasks" replace /> },
+      { path: "overview", element: <ProjectTabPlaceholder title="Overview" /> },
+      { path: "tasks", element: <KanbanBoard /> },
+      { path: "teams", element: <ProjectTabPlaceholder title="Teams" /> },
+      { path: "files", element: <ProjectTabPlaceholder title="Files" /> },
+    ],
+  },
+  { path: "/tasks", element: <PlaceholderPage title="Tasks" /> },
+  { path: "/chats", element: <PlaceholderPage title="Chats" /> },
+  { path: "/meetings", element: <PlaceholderPage title="Meetings" /> },
+  { path: "/reports", element: <PlaceholderPage title="Reports" /> },
+  { path: "*", element: <PlaceholderPage title="Page not found" /> },
+]);
