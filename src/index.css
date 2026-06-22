@@ -97,6 +97,7 @@
   --sidebar-ring: oklch(0.708 0 0)
 }
 
+/* hello */
 @theme inline {
   --color-brand: var(--brand);
   --font-heading: var(--font-sans);
