@@ -10,6 +10,7 @@
   --text-h: #08060d;
   --bg: #fff;
   --border: oklch(0.922 0 0);
+  --border-secondary: #E9E9EA;
   --code-bg: #f4f3ec;
   --accent: oklch(0.97 0 0);
   --accent-bg: rgba(170, 59, 255, 0.1);
@@ -117,6 +118,7 @@
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
+  --color-border-secondary: var(--border-secondary);
   --color-destructive: var(--destructive);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
