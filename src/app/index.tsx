@@ -1,11 +1,11 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
 
-import KanbanBoard from "@/components/projects/tasks/kanban-board";
-import ProjectTabPlaceholder from "@/components/projects/project-tab-placeholder";
+import KanbanBoard from "@/features/projects/tasks/kanban-board";
+import ProjectTabPlaceholder from "@/features/projects/project-tab-placeholder";
 import DashboardPage from "./routes/DashboardPage";
 import PlaceholderPage from "./routes/PlaceholderPage";
 import ProjectLayout from "./routes/ProjectLayout";
-import TeamsSection from "@/components/projects/teams/teams-section";
+import TeamsSection from "@/features/projects/teams/teams-section";
 export const router = createBrowserRouter([
   { path: "/", element: <Navigate to="/projects" replace /> },
   { path: "/dashboard", element: <DashboardPage /> },

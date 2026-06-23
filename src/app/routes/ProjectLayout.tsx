@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 
 import DashboardLayout from "@/components/layout/dashboard-layout";
-import ProjectHeader from "@/components/projects/project-header";
+import ProjectHeader from "@/features/projects/project-header";
 
 /**
  * Layout route for a single project. The project header (title + tabs) stays

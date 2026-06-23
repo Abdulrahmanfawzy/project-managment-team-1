@@ -2,7 +2,7 @@ import { Calendar, MessageSquareText } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Progress } from "@/components/ui/progress";
-import AvatarGroup from "../../ui/avatar-group";
+import AvatarGroup from "@/components/ui/avatar-group";
 import type { Priority, Task } from "./data/data";
 
 const priorityStyles: Record<Priority, string> = {
