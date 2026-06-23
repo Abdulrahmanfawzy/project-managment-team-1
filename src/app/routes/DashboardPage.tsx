@@ -1,5 +1,12 @@
-import PlaceholderPage from "./PlaceholderPage";
+import DashboardLayout from "@/components/layout/dashboard-layout";
+import Dashboard from "@/features/projects/Dashboard/DashboardPage";
 
 export default function DashboardPage() {
-  return <PlaceholderPage title="Dashboard" />;
+  return (
+    <DashboardLayout>
+      <main className="flex-1">
+        <Dashboard />
+      </main>
+    </DashboardLayout>
+  );
 }
