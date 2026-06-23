@@ -1,7 +1,7 @@
-import type { Task, Priority } from "@/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { CheckSquare, MessageSquare, Calendar } from "lucide-react";
+import type { Priority, Task } from "@/types";
+import { Calendar, MessageSquare } from "lucide-react";
 
 interface TaskCardProps {
     task: Task;
@@ -63,12 +63,12 @@ export function TaskCard({ task }: TaskCardProps) {
                     <div className="flex items-center gap-3 text-muted-foreground">
                         {task.comments > 0 && (
                             <div className="flex items-center gap-1">
-                                <span className="text-[11px] font-medium">{task.comments}</span>
+                                <span className="text-xs font-medium">{task.comments}</span>
                                 <MessageSquare className="size-3.5" />
                             </div>
                         )}
                         <div className="flex items-center gap-1">
-                            <span className="text-[11px] font-medium">{task.dueDate}</span>
+                            <span className="text-xs font-medium">{task.dueDate}</span>
                             <Calendar className="size-3.5" />
                         </div>
                     </div>

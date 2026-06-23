@@ -8,7 +8,7 @@ export function SearchInput() {
 
             <Input
                 placeholder="Search"
-                className="w-[280px] pl-10"
+                className="w-72 pl-10"
             />
         </div>
     );

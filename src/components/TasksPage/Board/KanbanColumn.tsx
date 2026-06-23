@@ -9,7 +9,7 @@ interface KanbanColumnProps {
 
 export function KanbanColumn({ column }: KanbanColumnProps) {
     return (
-        <div className="min-h-[650px] rounded-2xl border border-border-secondary bg-background overflow-hidden">
+        <div className="min-h-162.5 rounded-2xl border border-border-secondary bg-background overflow-hidden">
             <ColumnHeader
                 title={column.title}
                 variant={column.variant}

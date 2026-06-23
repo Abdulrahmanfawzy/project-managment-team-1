@@ -9,7 +9,7 @@ import {
 export function TaskFilterSelect() {
     return (
         <Select>
-            <SelectTrigger className="w-[160px]">
+            <SelectTrigger className="w-40">
                 <SelectValue placeholder="My Task" />
             </SelectTrigger>
 

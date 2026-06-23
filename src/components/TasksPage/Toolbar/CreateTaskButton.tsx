@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, type ChangeEvent } from "react";
 import { Plus, FileText, Calendar, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 export function CreateTaskButton() {
   const [open, setOpen] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
     setOpen(false);
   };

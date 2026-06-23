@@ -31,7 +31,7 @@ export default function AddTaskButton() {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-[550px] rounded-3xl p-8 border-border-secondary bg-white dark:bg-slate-950">
+      <DialogContent className="sm:max-w-2xl rounded-3xl p-8 border-border-secondary bg-white dark:bg-slate-950">
         <DialogHeader className="mb-6">
           <DialogTitle className="text-xl font-bold text-foreground">
             Create Task
