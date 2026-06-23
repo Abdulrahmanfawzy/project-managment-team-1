@@ -8,6 +8,7 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 type Header = {
     headName: string;
@@ -46,10 +47,9 @@ export function TableBuilder<T>({
 
     return (
         <div className="bg-card grid rounded-xl">
-            {/* Table title pass it as translation key in en/ar files*/}
             {tableTitle && (
                 <div className="flex items-center justify-between px-6 py-3">
-                    <h2 className="before:bg-brand relative font-semibold before:absolute before:inset-y-0.5 before:-start-2 before:w-0.5">
+                    <h2 className="before:bg-brand relative font-semibold before:absolute before:inset-y-0.5 before:-inset-s-2 before:w-0.5">
                         {tableTitle}
                     </h2>
 
