@@ -68,8 +68,6 @@ const renderNeedle = (value: number, cx: number, cy: number, iR: number, oR: num
 };
 export default function ProjectDetailsPage() {
   const { projectId } = useParams();
-  const navigate = useNavigate();
-  const [activeTab] = useState<string>("overview");
 
   // Dropdown States
   const [isTeamDropdownOpen, setIsTeamDropdownOpen] = useState(false);
@@ -87,68 +85,7 @@ export default function ProjectDetailsPage() {
   ];
 
   return (
-    <div className="w-full min-h-screen bg-[#F8FAFC] flex justify-center py-8 px-12 font-sans selection:bg-blue-100">
-      <div className="w-full max-w-[1312px] flex flex-col gap-8">
-        
-        {/* header frame  */}
-        <div className="w-full flex justify-between items-start">
-          <div className="flex flex-col gap-4">
-            {/* breadcrumbs */}
-            <div className="flex items-center gap-2 text-[14px] font-normal font-inter">
-              <span 
-                className="text-[#00000099] cursor-pointer hover:text-black transition-colors"
-                onClick={() => navigate("/projects")}
-              >
-                Projects
-              </span>
-              <span className="text-[#00000099]">{`>`}</span>
-              <span className="text-black">{details.name}</span>
-            </div>
-
-            {/* title  and indicator */}
-            <div className="flex items-center gap-4">
-              <h1 className="text-[31px] font-semibold text-black leading-tight">
-                {details.name}
-              </h1>
-              <div className="bg-[#EAF6EA] px-3 py-1.5 rounded-full flex items-center justify-center">
-                <span className="text-[12px] text-[#22C55E] font-medium">
-                  {details.completedPercentage}% Completed
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* due date frame */}
-          <div className="w-81 h-17.75 p-3 rounded-[12px] border border-[#F3F4F6] bg-white flex flex-col justify-between">
-            <span className="text-[14px] text-[#252525] font-normal leading-none">DuE Date</span>
-            
-            <div className="relative w-[300px] h-[4px] bg-[#E6EFFF] rounded-full overflow-hidden mt-1">
-              <div 
-                className="absolute top-0 left-0 h-full bg-[#005AFB] rounded-[100px]" 
-                style={{ width: `${details.completedPercentage}%` }}
-              />
-            </div>
-
-            <div className="flex justify-between w-full mt-1">
-              <span className="text-[11px] text-slate-500 font-medium">Start Date: <span className="text-black">{details.startDate}</span></span>
-              <span className="text-[11px] text-slate-500 font-medium">Deadline: <span className="text-black">{details.deadline}</span></span>
-            </div>
-          </div>
-        </div>
-
-        {/* Tabs */}
-        <div className="border-b border-slate-200">
-          <div className="flex gap-8 text-sm font-medium text-slate-500">
-             <button className="text-blue-600 border-b-2 border-blue-600 pb-2">Overview</button>
-             <button className="pb-2 hover:text-slate-900">Tasks</button>
-             <button className="pb-2 hover:text-slate-900">Teams</button>
-             <button className="pb-2 hover:text-slate-900">Files</button>
-          </div>
-        </div>
-
-        {/* layout area  */}
-        {activeTab === "overview" && (
-          <div className="grid grid-cols-1 lg:grid-cols-[864px_416px] gap-[32px] w-full items-start">
+    <div className="grid grid-cols-1 lg:grid-cols-[864px_416px] gap-[32px] w-full items-start">
             
             {/* Left Column */}
             <div className="flex flex-col gap-[32px] w-full">
@@ -329,10 +266,6 @@ export default function ProjectDetailsPage() {
               </Card>
 
             </div>
-          </div>
-        )}
-
-      </div>
     </div>
   );
 }
