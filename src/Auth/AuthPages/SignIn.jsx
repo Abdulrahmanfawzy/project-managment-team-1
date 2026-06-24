@@ -1,9 +1,11 @@
 import { useForm } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
 import { Button } from "../../components/ui/button";
+import {useNavigate} from 'react-router-dom';
 import { Link } from "react-router-dom";
 
 function SignIn() {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -12,21 +14,22 @@ function SignIn() {
 
   const onSubmit = (data) => {
     console.log(data);
+    navigate("/home");
   };
 
   return (
     <div className=" pt-4">
         <div className="text-center ">
-            <h1 className=" font-bold text-black text-3xl pt-5">Sign In</h1>
-            <p className="font-thin text-xs py-3 text-gray mb-5">Welcome back, you’ve been missed!</p>
-            <div className="px-5 mb-5 mt-2">
+            <h1 className=" font-bold text-black text-3xl pt-2">Sign In</h1>
+            <p className="font-thin text-xs py-3 text-gray">Welcome back, you’ve been missed!</p>
+            <div className="px-5 mb-1 mt-1">
                 <Button variant="bg-white " className="w-full flex items-center gap-2 border border-black/20 p-5">
                 <FcGoogle size={20} />
                     Sign with Google
                 </Button>
             </div>
             <div className="Divider">
-                <div className="flex items-center my-6  ">
+                <div className="flex items-center my-2  ">
                 <div className="flex-1 h-px bg-gray-300 ml-5" />
                 <span className="px-3 text-gray-500 text-xs">OR</span>
                 <div className="flex-1 h-px bg-gray-300 mr-5" />
@@ -35,7 +38,7 @@ function SignIn() {
         </div>
         <form  onSubmit={handleSubmit(onSubmit)} className="space-y-4 px-5">
       {/* Email */}
-      <div className="h-15" >
+      <div className="h-12" >
         <input
           type="email"
           placeholder="Your Email"
@@ -50,14 +53,14 @@ function SignIn() {
         />
 
         {errors.email && (
-          <p className="text-red-500 h-10 text-[11px] sm:text-sm md:text-md">
+          <p className="text-red-500 h-10 text-[10px] sm:text-sm md:text-md">
             {errors.email.message}
           </p>
         )}
       </div>
 
       {/* Password */}
-      <div className="h-15">
+      <div className="h-12">
         <input
           type="password"
           placeholder="Password"
@@ -72,14 +75,14 @@ function SignIn() {
         />
 
         {errors.password && (
-          <p className="text-red-500 items-center text-[11px] sm:text-sm md:text-md">
+          <p className="text-red-500 items-center text-[10px] sm:text-sm md:text-md ">
             {errors.password.message}
           </p>
         )}
       </div>
 
       {/* Remember Me */}
-<div className="flex items-center justify-between">
+<div className="flex items-center justify-between m-1">
   <div className="flex items-center gap-2">
     <input
       type="checkbox"
@@ -102,7 +105,7 @@ function SignIn() {
         type="submit"
         className="w-full rounded-4xl bg-blue-600 text-white p-[6px] text-[11px] sm:text-sm md:text-md"
       >
-        Log In
+        Sign In
       </button>
     </form>
     <div className=" items-center text-center ">

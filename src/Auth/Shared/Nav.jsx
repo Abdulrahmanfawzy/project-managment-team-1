@@ -12,7 +12,7 @@ export default function Nav() {
   const [position, setPosition] = React.useState("English")
 
     return (
-        <nav className="flex justify-between items-center py-4 px-5">
+        <nav className="flex justify-between items-center py-2 sm:py-4 px-5">
             <div className="">
                 <h1 className="text-Auth-head-font-color font-semibold text-xl ">Collabspace</h1>
             </div>
