@@ -61,6 +61,8 @@ const statistics = [
     icon: <ClipboardCheck />,
   },
 ];
+
+
 export default function DashboardPage() {
   return (
     <div className="container mx-auto my-6">
