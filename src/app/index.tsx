@@ -17,7 +17,7 @@ import ResetPassword from "@/Auth/AuthPages/ResetPassword";
 import VerifyEmail from "@/Auth/AuthPages/VerifyEmail";
 
 export const router = createBrowserRouter([
-  { path: "/", element: <Navigate to="/projects" replace /> },
+  { path: "/", element: <Navigate to="/signin" replace /> },
   {
     element: <MainLayout />,
     children: [
