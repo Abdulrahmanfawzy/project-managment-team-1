@@ -4,7 +4,7 @@ import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
-} from "../../components/ui/input-otp"
+} from "@/components/ui/input-otp"
 import { Link } from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
 export default function VerifyEmail() {

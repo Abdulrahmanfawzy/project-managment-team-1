@@ -1,8 +1,8 @@
 import DashboardLayout from "@/components/layout/dashboard-layout";
-import JoinMeetingHeader from "./components/JoinMeetingHeader";
-import MeetingVedio from "./components/MeetingVedio";
-import MeetingSummary from "./components/MeetingSummary";
-import MeetingTranscripts from "./components/MeetingTranscripts";
+import JoinMeetingHeader from "../../features/meetings/components/JoinMeetingHeader";
+import MeetingVedio from "../../features/meetings/components/MeetingVedio";
+import MeetingSummary from "../../features/meetings/components/MeetingSummary";
+import MeetingTranscripts from "../../features/meetings/components/MeetingTranscripts";
 
 export default function JoinMeetingPage() {
   return (

@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
-import { Button } from "../../components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
 
 function SignUp() {
