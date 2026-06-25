@@ -1,7 +1,7 @@
-import { ChevronRight } from "lucide-react";
-import { Link, NavLink, useParams } from "react-router-dom";
+import { NavLink, useParams } from "react-router-dom";
 
 import { cn } from "@/lib/utils";
+import Breadcrumb from "@/components/shared/breadcrumb";
 
 const tabs = [
   { label: "Overview", slug: "overview" },
@@ -19,13 +19,12 @@ export default function ProjectHeader() {
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           {/* Breadcrumb */}
-          <div className="flex items-center gap-1 text-sm text-muted-foreground">
-            <Link to="/projects" className="hover:text-foreground">
-              Projects
-            </Link>
-            <ChevronRight className="size-4" />
-            <span className="text-text-h">{projectName}</span>
-          </div>
+          <Breadcrumb
+            items={[
+              { label: "Projects", to: "/projects" },
+              { label: projectName },
+            ]}
+          />
 
           {/* Title + completion badge */}
           <div className="mt-1 flex items-center gap-3">
