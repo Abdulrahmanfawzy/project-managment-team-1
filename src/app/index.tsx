@@ -16,6 +16,7 @@ import ForgotPassword from "@/Auth/AuthPages/ForgotPassword";
 import ResetPassword from "@/Auth/AuthPages/ResetPassword";
 import VerifyEmail from "@/Auth/AuthPages/VerifyEmail";
 import ReportsPage from "./routes/ReportsPage";
+import MeetingsPage from "./routes/MeetingsPage";
 
 export const router = createBrowserRouter([
   { path: "/", element: <Navigate to="/signin" replace /> },
@@ -44,7 +45,8 @@ export const router = createBrowserRouter([
   },
   { path: "/tasks", element: <TasksPage /> },
   { path: "/chats", element: <PlaceholderPage title="Chats" /> },
-  { path: "/meetings", element: <PlaceholderPage title="Meetings" /> },
+  { path: "/meetings", element: <MeetingsPage/> },
+  { path: "/meetings/design-review", element: <PlaceholderPage title="Design review" /> },
   { path: "/reports", element: <ReportsPage /> },
   { path: "*", element: <PlaceholderPage title="Page not found" /> },
 ]);
