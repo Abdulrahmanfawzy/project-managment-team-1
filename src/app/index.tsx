@@ -9,13 +9,14 @@ import ProjectLayout from "./routes/ProjectLayout";
 import TeamsSection from "@/features/projects/teams/teams-section";
 import FilesSection from "@/features/projects/files/FilesSection";
 import TasksPage from "./routes/TasksPage";
-import MainLayout from "@/Auth/Layout/MainLayout";
+import MainLayout from "@/components/layout/MainLayout";
 import SignIn from "@/Auth/AuthPages/SignIn";
 import SignUp from "@/Auth/AuthPages/SignUp";
 import ForgotPassword from "@/Auth/AuthPages/ForgotPassword";
 import ResetPassword from "@/Auth/AuthPages/ResetPassword";
 import VerifyEmail from "@/Auth/AuthPages/VerifyEmail";
 import ReportsPage from "./routes/ReportsPage";
+import JoinMeetingPage from "@/features/meetings/JoinMeetingPage";
 
 export const router = createBrowserRouter([
   { path: "/", element: <Navigate to="/signin" replace /> },
@@ -44,7 +45,7 @@ export const router = createBrowserRouter([
   },
   { path: "/tasks", element: <TasksPage /> },
   { path: "/chats", element: <PlaceholderPage title="Chats" /> },
-  { path: "/meetings", element: <PlaceholderPage title="Meetings" /> },
+  { path: "/meetings", element: <JoinMeetingPage /> },
   { path: "/reports", element: <ReportsPage /> },
   { path: "*", element: <PlaceholderPage title="Page not found" /> },
 ]);
