@@ -1,8 +1,11 @@
-import { MoreVertical, Plus } from "lucide-react";
+import { MoreVertical } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import AddTask from "./AddTask";
 import TaskCard from "../task-card";
-import type { ColumnId, Task } from "../data/data";
+import type { ColumnId } from "../data/data";
+import type { ApiTask } from "../types/tasks";
+import { columnToStatus } from "../utils/task-mapper";
 
 const headerStyles: Record<ColumnId, { bg: string; dot: string }> = {
   todo: { bg: "bg-white", dot: "bg-slate-400" },
@@ -14,7 +17,7 @@ const headerStyles: Record<ColumnId, { bg: string; dot: string }> = {
 interface KanbanColumnProps {
   id: ColumnId;
   title: string;
-  tasks: Task[];
+  tasks: ApiTask[];
 }
 
 export default function KanbanColumn({ id, title, tasks }: KanbanColumnProps) {
@@ -35,10 +38,7 @@ export default function KanbanColumn({ id, title, tasks }: KanbanColumnProps) {
       </div>
 
       <div className="flex flex-col gap-3 p-4">
-        <button className="flex items-center justify-center gap-1.5 rounded-full border border-dashed border-brand/60 py-2.5 text-sm font-medium text-brand transition-colors hover:bg-brand/5">
-          Add Task
-          <Plus className="size-4" />
-        </button>
+        <AddTask status={columnToStatus[id]} />
 
         {tasks.map((task) => (
           <TaskCard key={task.id} task={task} />

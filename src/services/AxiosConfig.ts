@@ -5,7 +5,9 @@ import { DEV_TOKEN } from "@/constants/token";
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   headers: {
-    "Content-Type": "application/json",
+    // No global Content-Type: axios sets it per request —
+    // application/json for plain objects, multipart/form-data
+    // (with boundary) for FormData.
     Accept: "application/json",
   },
 });

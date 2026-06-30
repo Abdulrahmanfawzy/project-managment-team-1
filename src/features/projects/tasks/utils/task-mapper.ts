@@ -9,6 +9,15 @@ const statusToColumn: Record<TaskStatus, ColumnId> = {
   completed: "completed",
 };
 
+// board column id → API status (reverse of statusToColumn).
+// Used when creating a task from a specific column.
+export const columnToStatus: Record<ColumnId, TaskStatus> = {
+  todo: "pending",
+  "in-progress": "in_progress",
+  "in-review": "in_review",
+  completed: "completed",
+};
+
 // API priority → UI priority badge (no "critical" in the UI → treat as High)
 const priorityMap: Record<TaskPriority, Priority> = {
   low: "Low",
@@ -38,16 +47,19 @@ export function mapApiTask(task: ApiTask): Task {
   };
 }
 
-// Group API tasks into the four board columns (already mapped to UI shape).
-export function groupTasksByColumn(tasks: ApiTask[]): Record<ColumnId, Task[]> {
-  const grouped: Record<ColumnId, Task[]> = {
+// Group raw API tasks into the four board columns.
+// (Cards map to UI shape themselves so they keep access to the raw task.)
+export function groupTasksByColumn(
+  tasks: ApiTask[],
+): Record<ColumnId, ApiTask[]> {
+  const grouped: Record<ColumnId, ApiTask[]> = {
     todo: [],
     "in-progress": [],
     "in-review": [],
     completed: [],
   };
   for (const task of tasks) {
-    grouped[statusToColumn[task.status]].push(mapApiTask(task));
+    grouped[statusToColumn[task.status]].push(task);
   }
   return grouped;
 }
