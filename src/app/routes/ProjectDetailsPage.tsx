@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import {
   ChevronDown,
@@ -7,13 +7,12 @@ import {
   AlertCircle,
   CheckCircle2,
   Check,
+  Loader2,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import type { ProjectDetails } from "@/types/project";
 import Chart from "@/components/ui/chart";
 import { Cell, Customized, Pie, PieChart, ResponsiveContainer } from "recharts";
-import { MOCK_DETAILS } from "@/data/mockdetails";
-
+import { useProjectDetails } from "@/features/projects/hooks/useProjectDetails";
 
 interface ViewBox {
   cx: number;
@@ -60,18 +59,11 @@ export default function ProjectDetailsPage() {
   const [selectedRole, setSelectedRole] = useState("UI/UX");
   const roles = ["UI/UX", "Front End", "Back End", "Graphic Designers"];
 
-  const details = useMemo<ProjectDetails>(() => {
-    if (!projectId) return MOCK_DETAILS.alpha;
-    return MOCK_DETAILS[projectId] ?? MOCK_DETAILS.alpha;
-  }, [projectId]);
-
-  const gaugeData = [
-    { value: details.projectCompletedPercentage },
-    { value: 100 - details.projectCompletedPercentage },
-  ];
+  // ✅ Real API data
+  const { data: details, isLoading, isError } = useProjectDetails(projectId);
 
   const NeedleCustomized = ({ viewBox }: { viewBox?: ViewBox }) => {
-    if (!viewBox) return null;
+    if (!viewBox || !details) return null;
     const { cx, cy, innerRadius, outerRadius } = viewBox;
     return renderNeedle(
       details.projectCompletedPercentage,
@@ -82,6 +74,27 @@ export default function ProjectDetailsPage() {
       "#27272B",
     );
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-20 w-full">
+        <Loader2 className="animate-spin text-[#005AFB]" size={32} />
+      </div>
+    );
+  }
+
+  if (isError || !details) {
+    return (
+      <div className="flex items-center justify-center py-20 w-full text-red-500 text-sm">
+        Failed to load project details. Please try again.
+      </div>
+    );
+  }
+
+  const gaugeData = [
+    { value: details.projectCompletedPercentage },
+    { value: 100 - details.projectCompletedPercentage },
+  ];
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[864px_416px] gap-8 w-full items-start max-w-[1312px] px-4">
@@ -294,39 +307,43 @@ export default function ProjectDetailsPage() {
           </div>
 
           <div className="flex flex-col gap-4">
-            {details.team.map((member, idx) => (
-              <div
-                key={member.id}
-                className="flex justify-between items-center"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="relative">
-                    <img
-                      src={member.avatarUrl}
-                      alt={member.name}
-                      className="w-9.5 h-9.5 rounded-full object-cover"
-                    />
-                    {idx === 0 && (
-                      <div className="absolute -top-1 -right-1 w-4 h-4 bg-blue-600 rounded-full flex items-center justify-center border-2 border-white">
-                        <Check
-                          size={10}
-                          className="text-white"
-                          strokeWidth={3}
-                        />
-                      </div>
-                    )}
-                  </div>
-                  <div>
-                    <p className="text-[14px] font-semibold text-slate-800">
-                      {member.name}
-                    </p>
-                    <span className="text-[12px] text-slate-400 font-normal">
-                      {member.role}
-                    </span>
+            {details.team.length === 0 ? (
+              <p className="text-sm text-slate-400">No team members yet.</p>
+            ) : (
+              details.team.map((member, idx) => (
+                <div
+                  key={member.id}
+                  className="flex justify-between items-center"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="relative">
+                      <img
+                        src={member.avatarUrl}
+                        alt={member.name}
+                        className="w-9.5 h-9.5 rounded-full object-cover"
+                      />
+                      {idx === 0 && (
+                        <div className="absolute -top-1 -right-1 w-4 h-4 bg-blue-600 rounded-full flex items-center justify-center border-2 border-white">
+                          <Check
+                            size={10}
+                            className="text-white"
+                            strokeWidth={3}
+                          />
+                        </div>
+                      )}
+                    </div>
+                    <div>
+                      <p className="text-[14px] font-semibold text-slate-800">
+                        {member.name}
+                      </p>
+                      <span className="text-[12px] text-slate-400 font-normal">
+                        {member.role}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </Card>
       </div>
