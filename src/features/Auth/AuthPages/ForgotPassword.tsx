@@ -1,6 +1,6 @@
 import React from 'react'
 import { useForm } from "react-hook-form";
-import {useNavigate} from 'react-router-dom';
+import {useLocation, useNavigate} from 'react-router-dom';
 import { Link } from "react-router-dom";
 import {forgotPasswordSchema} from "../Scima/forgotPassword.schema";
 import type {forgotPasswordFormData} from "../Scima/forgotPassword.schema";
@@ -10,7 +10,6 @@ export default function ForgotPassword() {
     const navigate = useNavigate();
     const [successMessage, setSuccessMessage] = React.useState<string | null>(null);
     const timerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
-
     React.useEffect(() => {
       return () => {
         if (timerRef.current) {
