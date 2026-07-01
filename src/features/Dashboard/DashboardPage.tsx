@@ -1,13 +1,4 @@
-import {
-  ArrowUpRight,
-  Gauge,
-} from "lucide-react";
-import Chart, {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-  type ChartConfig,
-} from "@/components/ui/chart";
+import { ArrowUpRight, Gauge } from "lucide-react";
 import StatsCard from "@/components/shared/StatsCard";
 import Charts from "@/components/ui/chart";
 import { statistics } from "./Data/DashboardData";
@@ -17,45 +8,53 @@ import DashboardActiveProjects from "./DashboardActiveFiles";
 import DashboardProgresses from "./DashboardProgresses";
 import DashboardEvents from "./DashboardEvents";
 import AskAi from "./AskAi";
-const chartData = [
-  { month: "January", desktop: 186, mobile: 80 },
-  { month: "February", desktop: 305, mobile: 200 },
-  { month: "March", desktop: 237, mobile: 120 },
-  { month: "April", desktop: 73, mobile: 190 },
-  { month: "May", desktop: 209, mobile: 130 },
-  { month: "June", desktop: 214, mobile: 140 },
-];
-const chartConfig = {
-  desktop: {
-    label: "Desktop",
-    color: "var(--chart-1)",
-  },
-  mobile: {
-    label: "Mobile",
-    color: "var(--chart-2)",
-  },
-} satisfies ChartConfig;
+import { useDashboardStats } from "@/features/Dashboard/hooks/UseDashboardStats";
+
 export default function DashboardPage() {
+  const { data, isPending, error } = useDashboardStats();
+
+  if (isPending) {
+    return (
+      <div className="container mx-auto px-4 my-6">
+        <h2>Loading...</h2>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 my-6">
+        <h2>Something went wrong!</h2>
+      </div>
+    );
+  }
+
   return (
-    <div className="container m-auto  px-4  my-6 ">
-      <div className="grid grid-cols-1  lg:grid-cols-4 gap-4 ">
+    <div className="container m-auto px-4 my-6">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
         {statistics.map((item, index) => (
           <StatsCard
             key={index}
             title={item.title}
-            value={item.value}
-            subValue={item.subValue}
+            value={data?.data.completed_tasks ?? 0}
             icon={item.icon}
             color={item.color}
             backgroundColor={item.backgroundColor}
-            progressValue={item.progressValue}
+            progressValue={`${data?.data.completed_tasks ?? 0} / ${data?.data.total_tasks ?? 0}`}
             iconColor={item.iconColor}
           />
         ))}
-        <div className="p-4 shadow-sm text-black  space-y-2 rounded-sm flex justify-between">
+
+        <div className="p-4 shadow-sm text-black space-y-2 rounded-sm flex justify-between">
           <div className="space-y-3">
-            <h2 className="text-gray-600 font-medium">Completion Rate</h2>
-            <h2 className="text-2xl font-bold">33%</h2>
+            <h2 className="text-gray-600 font-medium">
+              Completion Rate
+            </h2>
+
+            <h2 className="text-2xl font-bold">
+              {data?.data.completion_rate ?? 0}%
+            </h2>
+
             <div className="flex items-center gap-2">
               <ArrowUpRight size={18} className="text-green-700" />
               <span className="text-xs text-gray-500 md:text-sm">
@@ -63,18 +62,22 @@ export default function DashboardPage() {
               </span>
             </div>
           </div>
+
           <div>
             <Gauge className="text-gray-400" />
           </div>
         </div>
       </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 mt-5 w-full">
-        <div className="lg:col-span-6 bg-white rounded-lg  ">
+        <div className="lg:col-span-6 bg-white rounded-lg">
           <Charts />
         </div>
+
         <DashboardActiveProjects />
         <DashboardFiles />
       </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 mt-7 w-full">
         <DashboardTasks />
         <DashboardProgresses />
@@ -82,5 +85,5 @@ export default function DashboardPage() {
         <AskAi />
       </div>
     </div>
-  )
+  );
 }

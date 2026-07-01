@@ -2,7 +2,7 @@
 import { ArrowUpRight } from 'lucide-react'
 
 
-export default function StatsCard({ title, value, subValue, icon, progressValue, color,backgroundColor ,iconColor}) {
+export default function StatsCard({ title, value, icon, progressValue, color,backgroundColor ,iconColor}) {
 
   return (
     <div className="p-4 shadow-sm text-black  space-y-2 rounded-sm  ">
@@ -13,7 +13,7 @@ export default function StatsCard({ title, value, subValue, icon, progressValue,
       <div className="flex space-x-2 items-center">
         <h2 className="text-2xl font-bold">{value}</h2>
         <ArrowUpRight size={18} strokeWidth={0.75} className="text-green-800" />
-        <p className="text-sm text-gray-500">{subValue}</p>
+        {/* <p className="text-sm text-gray-500">{subValue}</p> */}
       </div>
       <h2 className="text-end">{progressValue}</h2>
       <div className={`w-full ${backgroundColor} rounded-full h-2`}>

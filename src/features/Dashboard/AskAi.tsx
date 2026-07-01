@@ -10,13 +10,18 @@ export default function AskAi() {
  
   const handleAsk = () => {
     if (!question.trim()) return;
-   console.log("Sending:", question);
+  
     mutate(question, {
       onSuccess: () => {
         setQuestion("");
       },
     });
   };
+
+  const handleKeyDown = (e:any) => {
+    if (e.key === "Enter" ) {
+      handleAsk();
+  }}
 
   return (
     <div className="lg:col-span-3 bg-white rounded-lg shadow-sm p-5 flex flex-col justify-between">
@@ -40,6 +45,7 @@ export default function AskAi() {
           className="w-full bg-gray-100 rounded-md p-2 pr-12 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"
           rows={2}
           placeholder="Ask for anything..."
+          onKeyDown={handleKeyDown}
         />
 
         <button

@@ -5,34 +5,28 @@ import sql from "@/assets/image 1838.svg"
 import { ClipboardCheck, ClipboardClock, ClipboardList } from "lucide-react"
 export const statistics = [
   {
+    key: "pending_tasks",
     title: "Pending Tasks",
-    value: "32",
-    progressValue: "32/94",
-    subValue: "+9% from last month",
-    icon: <ClipboardClock/>,
+    icon: <ClipboardClock />,
     color: "bg-[#FA9E00]",
     backgroundColor: "bg-[#FFF5E6]",
-    iconColor: "#FA9E00"
+    iconColor: "#FA9E00",
   },
   {
+    key: "in_progress_tasks",
     title: "In Progress",
-    value: "40",
-    progressValue: "40/94",
-    subValue: "+12% from last month",
     icon: <ClipboardList />,
     color: "bg-[#005AFB]",
     backgroundColor: "bg-[#E6EFFF]",
-    iconColor: "#005AFB"
+    iconColor: "#005AFB",
   },
   {
+    key: "completed_tasks",
     title: "Completed",
-    value: "32",
-    progressValue: "22/94",
-    subValue: "+16% from last month",
     icon: <ClipboardCheck />,
     color: "bg-[#2BA52E]",
     backgroundColor: "bg-[#EAF6EA]",
-    iconColor: "#2BA52E"
+    iconColor: "#2BA52E",
   },
 ];
 
