@@ -1,5 +1,5 @@
-import type { ColumnVariant } from "@/types";
 import { MoreVertical } from "lucide-react";
+import type { ColumnVariant } from "../../types";
 
 interface ColumnHeaderProps {
     title: string;
@@ -8,16 +8,16 @@ interface ColumnHeaderProps {
 
 const variantBg: Record<ColumnVariant, string> = {
     todo: "bg-white",
-    progress: "bg-blue-50",
-    review: "bg-pink-50",
-    done: "bg-green-50",
+    in_progress: "bg-blue-50",
+    pending: "bg-pink-50",
+    completed: "bg-green-50",
 };
 
 const dotColor: Record<ColumnVariant, string> = {
     todo: "bg-violet-500",
-    progress: "bg-blue-500",
-    review: "bg-pink-500",
-    done: "bg-green-500",
+    in_progress: "bg-blue-500",
+    pending: "bg-pink-500",
+    completed: "bg-green-500",
 };
 
 export function ColumnHeader({ title, variant }: ColumnHeaderProps) {

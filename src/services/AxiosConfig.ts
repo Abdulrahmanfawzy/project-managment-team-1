@@ -12,7 +12,7 @@ const axiosInstance = axios.create({
 // Attach the auth token (if any) to every outgoing request.
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token");
+    const token = "21|7IRfWZIjgvxlsdluIgfuIgomkNnkqvQOgGHB2ugU9ede6530"
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -22,18 +22,18 @@ axiosInstance.interceptors.request.use(
 );
 
 // Handle global response errors (e.g. expired/invalid session).
-axiosInstance.interceptors.response.use(
-  (response) => response,
-  (error: AxiosError) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem("token");
-      // Redirect to the sign-in page on unauthorized responses.
-      if (window.location.pathname !== "/") {
-        window.location.href = "/";
-      }
-    }
-    return Promise.reject(error);
-  }
-);
+// axiosInstance.interceptors.response.use(
+//   (response) => response,
+//   (error: AxiosError) => {
+//     if (error.response?.status === 401) {
+//       localStorage.removeItem("token");
+//       // Redirect to the sign-in page on unauthorized responses.
+//       if (window.location.pathname !== "/") {
+//         window.location.href = "/";
+//       }
+//     }
+//     return Promise.reject(error);
+//   }
+// );
 
 export default axiosInstance;

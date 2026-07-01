@@ -1,56 +1,64 @@
-import { MoreVertical, Plus } from "lucide-react";
-
-import { cn } from "@/lib/utils";
-import TaskCard from "./task-card";
-import { columns, type ColumnId } from "./data/data";
-
-const headerStyles: Record<ColumnId, { bg: string; dot: string }> = {
-  todo: { bg: "bg-white", dot: "bg-slate-400" },
-  "in-progress": { bg: "bg-blue-50", dot: "bg-blue-500" },
-  "in-review": { bg: "bg-rose-50", dot: "bg-rose-400" },
-  completed: { bg: "bg-green-50", dot: "bg-green-500" },
-};
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { Board } from "@/features/TasksPage/components/Board/Board";
+import type { TasksResponse } from "@/features/TasksPage/types";
+import apiClient from "@/services/ApiClient";
 
 export default function KanbanBoard() {
-  return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-      {columns.map((column) => {
-        const style = headerStyles[column.id];
-        return (
-          <div
-            key={column.id}
-            className="flex flex-col overflow-hidden rounded-xl bg-white ring-1 ring-slate-200/70"
-          >
-            <div
-              className={cn(
-                "flex items-center justify-between px-4 py-3",
-                style.bg,
-              )}
-            >
-              <div className="flex items-center gap-2">
-                <span className={cn("size-2 rounded-full", style.dot)} />
-                <span className="text-sm font-medium text-text-h">
-                  {column.title}
-                </span>
-              </div>
-              <button className="text-muted-foreground hover:text-foreground">
-                <MoreVertical className="size-4" />
-              </button>
-            </div>
-
-            <div className="flex flex-col gap-3 p-4">
-              <button className="flex items-center justify-center gap-1.5 rounded-full border border-dashed border-brand/60 py-2.5 text-sm font-medium text-brand transition-colors hover:bg-brand/5">
-                Add Task
-                <Plus className="size-4" />
-              </button>
-
-              {column.tasks.map((task) => (
-                <TaskCard key={task.id} task={task} />
-              ))}
-            </div>
-          </div>
-        );
-      })}
-    </div>
+  const { projectId } = useParams<{ projectId: string }>();
+  const [tasksResponse, setTasksResponse] = useState<TasksResponse | null>(
+    null,
   );
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const getProjectTasks = async () => {
+      if (!projectId) {
+        setError("Project ID is required");
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        // this line back 404  i don't know if it's endPoint or something else for now 
+        const response: TasksResponse = await apiClient.get<TasksResponse>(
+          `/projects/${projectId}/tasks`,
+        );
+        setTasksResponse(response);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to load tasks");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    getProjectTasks();
+  }, [projectId]);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="text-sm text-muted-foreground">Loading tasks...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="text-sm text-destructive">{error}</div>
+      </div>
+    );
+  }
+
+  if (!tasksResponse) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="text-sm text-muted-foreground">No tasks available.</div>
+      </div>
+    );
+  }
+
+  return <Board response={tasksResponse} />;
 }
