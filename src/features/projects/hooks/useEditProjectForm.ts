@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { AxiosError } from "axios";
 import type { Project } from "@/types/project";
 import { useUpdateProject } from "@/features/projects/hooks/useUpdateProject";
 
@@ -29,7 +30,7 @@ export function useEditProjectForm(
   useEffect(() => {
     if (project) {
       setProjectName(project.name);
-      setDescription("");
+      setDescription(project.description ?? "");
       setPriority(toPriorityOption(project.priority));
       setStartDate(project.startDate);
       setEndDate(project.deadline);
@@ -50,23 +51,48 @@ export function useEditProjectForm(
       return;
     }
 
+    const payload = {
+      name: projectName.trim(),
+      description: description.trim() || "No description provided.",
+      start_date: startDate,
+      deadline: endDate,
+      priority: priority.toLowerCase() as "high" | "medium" | "low",
+      status: project.status as "pending" | "in_progress" | "completed",
+    };
+
+    console.log("Project ID:", project.id);
+    console.log("Update Payload:", payload);
+
     updateProject(
       {
         id: project.id,
-        payload: {
-          name: projectName.trim(),
-          description: description.trim() || "No description provided.",
-          start_date: startDate,
-          deadline: endDate,
-          priority: priority.toLowerCase() as "high" | "medium" | "low",
-        },
+        payload,
       },
       {
         onSuccess: handleClose,
-        onError: () => {
-          setFormError(
-            "Failed to update project. You can only edit projects you created.",
-          );
+        onError: (error) => {
+          const axiosError = error as AxiosError<{
+            message?: string;
+            errors?: Record<string, string[]>;
+          }>;
+
+          console.error("Update Project Error:", axiosError);
+          console.error("Response Data:", axiosError.response?.data);
+          console.error("Status:", axiosError.response?.status);
+
+          const response = axiosError.response?.data;
+
+          if (response?.errors) {
+            const firstError = Object.values(response.errors)
+              .flat()
+              .join("\n");
+
+            setFormError(firstError);
+          } else {
+            setFormError(
+              response?.message ?? "Failed to update project."
+            );
+          }
         },
       },
     );
