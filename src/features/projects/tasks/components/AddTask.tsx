@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Plus, FileText, Calendar, Upload } from "lucide-react";
 import {
@@ -9,13 +11,53 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import useCreateTask from "../hooks/useCreateTask";
+import type { TaskPriority, TaskStatus } from "../types/tasks";
 
-export default function AddTaskButton() {
+type FormValues = {
+  title: string;
+  start_date: string;
+  description?: string;
+  priority: TaskPriority;
+};
+
+interface AddTaskProps {
+  status: TaskStatus; // which column this button belongs to
+}
+
+export default function AddTask({ status }: AddTaskProps) {
   const [open, setOpen] = useState(false);
+  const { projectId } = useParams();
+  const createTask = useCreateTask();
+  const { register, handleSubmit, reset } = useForm<FormValues>({
+    defaultValues: { priority: "medium" },
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setOpen(false);
+  const onSubmit = (values: FormValues) => {
+    createTask.mutate(
+      {
+        project_id: Number(projectId),
+        name: "hanan", // TODO: replace with logged-in user once sign-in is ready
+        title: values.title,
+        start_date: values.start_date,
+        description: values.description,
+        priority: values.priority, // chosen in the form
+        status, // taken from the column this button is in
+        user_ids: [1], // TODO: API requires ≥1 assignee; wire "Add Guests" field
+      },
+      {
+        onSuccess: () => {
+          reset();
+          setOpen(false);
+        },
+        onError: (error) => {
+          // Log the exact server response so we can see what's wrong.
+          console.error("Create task failed:", error);
+          // @ts-expect-error – axios error shape
+          console.error("Server said:", error?.response?.data);
+        },
+      },
+    );
   };
 
   return (
@@ -38,7 +80,7 @@ export default function AddTaskButton() {
           </DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Task Name */}
           <div className="relative">
             <label className="absolute -top-2 left-3 bg-white dark:bg-slate-950 px-1 text-xs text-muted-foreground font-medium z-10">
@@ -51,6 +93,7 @@ export default function AddTaskButton() {
               <Input
                 required
                 placeholder="Task Name"
+                {...register("title", { required: true })}
                 className="pl-10 h-11 border-slate-200 dark:border-slate-800 bg-transparent rounded-xl focus-visible:ring-1 focus-visible:ring-slate-300"
               />
             </div>
@@ -60,7 +103,9 @@ export default function AddTaskButton() {
           <div className="grid grid-cols-2 gap-4">
             <div className="relative">
               <Input
-                placeholder="Start Date"
+                required
+                type="date"
+                {...register("start_date", { required: true })}
                 className="h-11 pr-10 border-slate-200 dark:border-slate-800 bg-transparent rounded-xl focus-visible:ring-1 focus-visible:ring-slate-300"
               />
               <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
@@ -72,6 +117,36 @@ export default function AddTaskButton() {
               />
               <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
             </div>
+          </div>
+
+          {/* Priority */}
+          <div className="relative">
+            <label className="absolute -top-2 left-3 bg-white dark:bg-slate-950 px-1 text-xs text-muted-foreground font-medium z-10">
+              Priority
+            </label>
+            <select
+              {...register("priority")}
+              className="h-11 w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-transparent px-3 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-300"
+            >
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+              <option value="critical">Critical</option>
+            </select>
+          </div>
+
+          {/* Description */}
+          <div className="relative">
+            <label className="absolute -top-2 left-3 bg-white dark:bg-slate-950 px-1 text-xs text-muted-foreground font-medium z-10">
+              Description
+            </label>
+            <textarea
+              required
+              rows={3}
+              placeholder="Task description"
+              {...register("description", { required: true })}
+              className="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-transparent px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-300"
+            />
           </div>
 
           {/* Add Guests */}
@@ -94,20 +169,6 @@ export default function AddTaskButton() {
                 </Button>
               </div>
             </div>
-
-            {/* Overlapping Guest Avatars */}
-            <div className="flex -space-x-1.5 pt-1 pl-1">
-              <img
-                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80"
-                alt="Guest"
-                className="size-7 rounded-full ring-2 ring-white dark:ring-slate-950 object-cover"
-              />
-              <img
-                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80"
-                alt="Guest"
-                className="size-7 rounded-full ring-2 ring-white dark:ring-slate-950 object-cover"
-              />
-            </div>
           </div>
 
           {/* Add Task Files */}
@@ -125,13 +186,23 @@ export default function AddTaskButton() {
             </div>
           </div>
 
+          {/* API error */}
+          {createTask.isError && (
+            <p className="text-sm text-red-600">
+              {/* @ts-expect-error – axios error shape */}
+              {createTask.error?.response?.data?.message ??
+                "Failed to create task"}
+            </p>
+          )}
+
           {/* Create Task Submit */}
           <div className="pt-2">
             <Button
               type="submit"
-              className="w-full h-12 bg-brand hover:bg-brand/90 text-white rounded-xl font-semibold shadow-lg shadow-brand/10 cursor-pointer"
+              disabled={createTask.isPending}
+              className="w-full h-12 bg-brand hover:bg-brand/90 text-white rounded-xl font-semibold shadow-lg shadow-brand/10 cursor-pointer disabled:opacity-60"
             >
-              Create Task
+              {createTask.isPending ? "Creating…" : "Create Task"}
             </Button>
           </div>
         </form>

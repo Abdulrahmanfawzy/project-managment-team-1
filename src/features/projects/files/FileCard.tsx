@@ -1,6 +1,7 @@
 import { Download, FileText } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { downloadFile } from "@/lib/downloadFile";
 import type { FileItem, FileType } from "./data/data";
 
 const fileTypeMeta: Record<FileType, { label: string; wrap: string }> = {
@@ -38,6 +39,7 @@ export default function FileCard({ file }: { file: FileItem }) {
 
       <button
         type="button"
+        onClick={() => downloadFile(file.url, file.downloadName)}
         aria-label={`Download ${file.name}`}
         className="shrink-0 rounded-lg p-1.5 text-text-h transition-colors hover:bg-slate-100"
       >
