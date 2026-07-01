@@ -124,7 +124,7 @@ export const Tasks = [
     priority: "High",
     priorityBackground: "bg-red-100",
     priorityColor: "text-red-700",
-    taskProgress: "82%",
+    taskProgress:"82%",
   },
   {
     taskName: "User Research",
@@ -132,7 +132,7 @@ export const Tasks = [
     priority: "Medium",
     priorityBackground: "bg-[#FFFAE7]",
     priorityColor: "text-[#E6BA0E]",
-    taskProgress: "52%",
+    taskProgress:"52%",
   },
   {
     taskName: "Design System Updates",
@@ -140,6 +140,6 @@ export const Tasks = [
     priority: "Low",
     priorityBackground: "bg-[#EAF6EA]",
     priorityColor: "text-[#2BA52E]",
-    taskProgress: "42%",
+    taskProgress:"42%",
   },
 ]

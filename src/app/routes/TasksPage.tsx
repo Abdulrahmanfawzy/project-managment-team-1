@@ -1,6 +1,6 @@
 import DashboardLayout from "@/components/layout/dashboard-layout";
-import { Board } from "@/features/TasksPage/Board/Board";
-import { Toolbar } from "@/features/TasksPage/Toolbar/Toolbar";
+import { Board } from "@/features/TasksPage/components/Board/Board";
+import { Toolbar } from "@/features/TasksPage/components/Toolbar/Toolbar";
 
 export default function TasksPage() {
   return (

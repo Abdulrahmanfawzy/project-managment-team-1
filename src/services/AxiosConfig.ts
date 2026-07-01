@@ -1,25 +1,30 @@
 import axios from "axios";
 import type { AxiosError } from "axios";
+import { DEV_TOKEN } from "@/constants/token";
 
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   headers: {
-    "Content-Type": "application/json",
+    // No global Content-Type: axios sets it per request —
+    // application/json for plain objects, multipart/form-data
+    // (with boundary) for FormData.
     Accept: "application/json",
   },
 });
 
-// Attach the auth token (if any) to every outgoing request.
+// Attach the auth token to every outgoing request.
+// Prefer a real logged-in token; fall back to the temporary DEV_TOKEN
+// until the sign-in flow is ready.
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token") || DEV_TOKEN;
     if (token) {
       config.headers.Authorization =`Bearer ${token}`;
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
 axiosInstance.interceptors.response.use(
@@ -32,7 +37,7 @@ axiosInstance.interceptors.response.use(
       }
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 export default axiosInstance;
