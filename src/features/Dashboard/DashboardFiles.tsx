@@ -1,12 +1,13 @@
 import { Download } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useDashboardRecents } from "@/features/Dashboard/hooks/UseRecents";
+import Spinner from "@/components/shared/Spinner";
 
 export default function DashboardFiles() {
   const { data, isPending, error } = useDashboardRecents();
 
   if (isPending) {
-    return <p>Loading...</p>;
+    return <Spinner />;
   }
 
   if (error) {
@@ -17,18 +18,13 @@ export default function DashboardFiles() {
     <div className="lg:col-span-3 space-y-4 rounded-lg h-auto lg:max-h-80 bg-white py-5 px-3 shadow-sm  overflow-y-scroll overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
       <div className="flex justify-between items-center">
         <h2 className="font-semibold text-black">Recent files</h2>
-        <Link
-          to="/files"
-          className="text-blue-500 text-sm"
-        >
+        <Link to="/files" className="text-blue-500 text-sm">
           See All
         </Link>
       </div>
 
       {data?.data?.length === 0 ? (
-        <p className="text-center text-gray-500 py-8">
-          No recent files found.
-        </p>
+        <p className="text-center text-gray-500 py-8">No recent files found.</p>
       ) : (
         data?.data?.map((file: any) => (
           <div

@@ -2,6 +2,7 @@ import { NavLink, useParams } from "react-router-dom";
 
 import { cn } from "@/lib/utils";
 import Breadcrumb from "@/components/shared/breadcrumb";
+import { useProjectDetails } from "./hooks/useProjectDetails";
 
 const tabs = [
   { label: "Overview", slug: "overview" },
@@ -13,6 +14,11 @@ const tabs = [
 export default function ProjectHeader() {
   const { projectId = "alpha" } = useParams();
   const projectName = projectId.charAt(0).toUpperCase() + projectId.slice(1);
+
+  // Real completion, computed from the project's tasks (same source as the
+  // Overview gauge). Undefined while loading.
+  const { data: details } = useProjectDetails(projectId);
+  const completed = details?.projectCompletedPercentage;
 
   return (
     <div className="bg-white px-6 pt-4">
@@ -29,9 +35,11 @@ export default function ProjectHeader() {
           {/* Title + completion badge */}
           <div className="mt-1 flex items-center gap-3">
             <h1 className="text-2xl font-bold text-text-h">{projectName}</h1>
-            <span className="rounded-md bg-green-50 px-2 py-0.5 text-xs font-medium text-green-600">
-              42% Completed
-            </span>
+            {completed !== undefined && (
+              <span className="rounded-md bg-green-50 px-2 py-0.5 text-xs font-medium text-green-600">
+                {completed}% Completed
+              </span>
+            )}
           </div>
         </div>
 

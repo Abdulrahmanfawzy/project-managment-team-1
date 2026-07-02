@@ -1,12 +1,12 @@
 import DashboardLayout from "@/components/layout/dashboard-layout";
 import PageContainer from "@/components/layout/PageContainer";
-import Dashboard from "@/features/Dashboard/DashboardPage";
+import AllFilesSection from "@/features/Files/AllFilesSection";
 
-export default function DashboardPage() {
+export default function FilesPage() {
   return (
     <DashboardLayout>
       <PageContainer>
-        <Dashboard />
+        <AllFilesSection />
       </PageContainer>
     </DashboardLayout>
   );

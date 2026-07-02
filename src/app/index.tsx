@@ -18,6 +18,7 @@ import VerifyEmail from "@/features/Auth/AuthPages/VerifyEmail";
 import ReportsPage from "./routes/ReportsPage";
 import MeetingsPage from "./routes/MeetingsPage";
 import JoinMeetingPage from "@/app/routes/JoinMeetingPage";
+import FilesPage from "./routes/FilesPage";
 
 export const router = createBrowserRouter([
   { path: "/", element: <Navigate to="/signin" replace /> },
@@ -45,6 +46,7 @@ export const router = createBrowserRouter([
     ],
   },
   { path: "/tasks", element: <TasksPage /> },
+  { path: "/files", element: <FilesPage /> },
   { path: "/chats", element: <PlaceholderPage title="Chats" /> },
   { path: "/meetings", element: <MeetingsPage /> },
   {

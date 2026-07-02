@@ -1,11 +1,12 @@
 import { Link } from "react-router-dom";
 import { useTasks } from "@/features/Dashboard/hooks/UseTasks";
+import Spinner from "@/components/shared/Spinner";
 
 export default function DashboardTasks() {
   const { data, isPending, error } = useTasks();
 
   if (isPending) {
-    return <p>Loading...</p>;
+    return <Spinner />;
   }
 
   if (error) {

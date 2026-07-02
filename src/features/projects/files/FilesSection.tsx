@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom";
 import FileCard from "./FileCard";
+import FileCardSkeleton from "./FileCardSkeleton";
 import UploadFile from "./components/UploadFile";
 import { useProjectFiles } from "./hooks/useProjectFiles";
 import { mapFileResponse, getRecentFiles } from "./utils/file-mapper";
@@ -28,7 +29,11 @@ const FilesSection = () => {
         </div>
 
         {isLoading && (
-          <p className="text-sm text-muted-foreground">Loading files…</p>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <FileCardSkeleton key={i} />
+            ))}
+          </div>
         )}
         {isError && <p className="text-sm text-red-600">Failed to load files.</p>}
         {files && files.data.length === 0 && (

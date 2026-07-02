@@ -5,7 +5,7 @@ import { ArrowUpRight } from 'lucide-react'
 export default function StatsCard({ title, value, icon, progressValue, color,backgroundColor ,iconColor}) {
 
   return (
-    <div className="p-4 shadow-sm text-black  space-y-2 rounded-sm  ">
+    <div className="p-4 bg-white border border-gray-100 shadow-sm text-black space-y-2 rounded-lg">
       <div className="flex justify-between items-center">
         <h2 className="text-lg font-semibold">{title}</h2>
         <span className={`rounded-full p-1 ${backgroundColor}`} style={{color:`${iconColor}`}}>{icon}</span>
