@@ -9,6 +9,7 @@ export default function TasksPage() {
   const { data, isPending, isError, error } = useTasks();
   const [selectedProjectId, setSelectedProjectId] = useState<string>("all");
   const [selectedProjectName, setSelectedProjectName] = useState<string>("all");
+  const [searchQeury, setSearchQeury] = useState<string>("");
 
   const allTasks = data?.data ?? [];
 
@@ -22,9 +23,11 @@ export default function TasksPage() {
         selectedProjectName === "all" ||
         String(task.project_id) === selectedProjectName;
 
-      return matchesProjectId && matchesTaskFilter;
+      const matchesSearchQuery = searchQeury !== "" ? task.title.toLowerCase().trim().includes(searchQeury.toLowerCase()) : allTasks
+
+      return matchesProjectId && matchesTaskFilter && matchesSearchQuery;
     });
-  }, [allTasks, selectedProjectId, selectedProjectName]);
+  }, [allTasks, selectedProjectId, selectedProjectName, searchQeury]);
 
   return (
     <DashboardLayout>
@@ -36,8 +39,10 @@ export default function TasksPage() {
             tasks={allTasks}
             selectedProjectId={selectedProjectId}
             selectedProjectName={selectedProjectName}
+            searchQeury={searchQeury}
             setSelectedProjectId={setSelectedProjectId}
             setSelectedProjectName={setSelectedProjectName}
+            setSearchQeury={setSearchQeury}
           />
         )}
 

@@ -1,7 +1,7 @@
 import { MoreVertical } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import AddTask from "../Task/AddTask";
+import AddTask from "../TaskDialog/AddTask";
 import TaskCard from "./TaskCard";
 import type { ColumnId } from "../../data/data";
 import type { ApiTask } from "../../types/tasks";
@@ -32,7 +32,7 @@ export default function KanbanColumn({
   const style = headerStyles[id];
 
   return (
-    <div className="flex flex-col overflow-hidden rounded-xl bg-white ring-1 ring-slate-200/70 overflow-y-scroll max-h-[calc(100vh-11rem)]">
+    <div className="flex flex-col overflow-hidden rounded-xl bg-white ring-1 ring-slate-200/70 overflow-y-auto max-h-[calc(100vh-11rem)]">
       <div
         className={cn("flex items-center justify-between px-4 py-3", style.bg)}
       >

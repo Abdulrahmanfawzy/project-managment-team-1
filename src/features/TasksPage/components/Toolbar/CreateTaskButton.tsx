@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import AddTask, { type ProjectOption } from "../Task/AddTask";
+import AddTask, { type ProjectOption } from "../TaskDialog/AddTask";
 
 interface CreateTaskButtonProps {
   projects?: ProjectOption[];
