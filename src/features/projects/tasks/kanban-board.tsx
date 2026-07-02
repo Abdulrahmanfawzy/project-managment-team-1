@@ -6,13 +6,20 @@ import { columns } from "@/features/TasksPage/data/data";
 import { useTasks } from "@/features/TasksPage/hooks/useTasks";
 import { groupTasksByColumn } from "@/features/TasksPage/utils/task-mapper";
 import KanbanColumn from "@/features/TasksPage/components/Board/KanbanColumn";
+import { SkeletonCard } from "@/features/TasksPage/components/Board/SkeletonCard";
 
 export default function KanbanBoard() {
   const { projectId } = useParams();
   const { data, isPending, isError, error } = useTasks();
 
   if (isPending) {
-    return <p className="p-4 text-sm text-muted-foreground">Loading tasks…</p>;
+    return (
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <SkeletonCard key={i} />
+        ))}
+      </div>
+    );
   }
 
   if (isError) {

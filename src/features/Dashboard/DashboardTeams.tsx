@@ -1,12 +1,13 @@
 import { ArrowDown } from "lucide-react";
 import avatar from "@/assets/Avatar.svg";
 import { useTeams } from "@/features/Dashboard/hooks/UseTeams";
+import Spinner from "@/components/shared/Spinner";
 
 export default function DashboardProgresses() {
   const { data, isPending, error } = useTeams();
 
   if (isPending) {
-    return <p>Loading...</p>;
+    return <Spinner />;
   }
 
   if (error) {

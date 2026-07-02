@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 
 import DashboardLayout from "@/components/layout/dashboard-layout";
+import PageContainer from "@/components/layout/PageContainer";
 import ProjectHeader from "@/features/projects/project-header";
 
 /**
@@ -11,9 +12,9 @@ export default function ProjectLayout() {
   return (
     <DashboardLayout>
       <ProjectHeader />
-      <main className="flex-1 px-6 py-6">
+      <PageContainer>
         <Outlet />
-      </main>
+      </PageContainer>
     </DashboardLayout>
   );
 }

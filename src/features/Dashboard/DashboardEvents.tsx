@@ -3,12 +3,13 @@ import avatar2 from "@/assets/Avatar2.svg";
 import avatar3 from "@/assets/Avatar3.svg";
 import { Link } from "react-router-dom";
 import { useMeetings } from "./hooks/UseMeetings";
+import Spinner from "@/components/shared/Spinner";
 
 export default function DashboardEvents() {
   const { data, isPending, error } = useMeetings();
 
   if (isPending) {
-    return <p>Loading...</p>;
+    return <Spinner />;
   }
 
   if (error) {

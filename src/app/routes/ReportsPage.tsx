@@ -1,14 +1,14 @@
 
-import React from "react";
 import DashboardLayout from "@/components/layout/dashboard-layout";
+import PageContainer from "@/components/layout/PageContainer";
 import ReportsPageContent from "@/features/ReportsPage/ReportsPageContent";
 
 export default function ReportsPage() {
     return (
         <DashboardLayout>
-            <main className="flex-1 p-6 bg-slate-50 min-h-screen">
+            <PageContainer className="bg-slate-50">
                 <ReportsPageContent />
-            </main>
+            </PageContainer>
         </DashboardLayout>
     );
 }

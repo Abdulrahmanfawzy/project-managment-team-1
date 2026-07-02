@@ -34,11 +34,11 @@ const ProjectsFilters: React.FC<ProjectsFiltersProps> = ({
   return (
     <div
       style={{
-        width: 1312,
+        width: "100%",
         height: 40,
         display: "flex",
         alignItems: "center",
-        marginTop: 70,
+        marginTop: 24,
       }}
     >
       {/* Search */}

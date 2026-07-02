@@ -11,12 +11,11 @@ const ProjectsPageHeader: React.FC<ProjectsPageHeaderProps> = ({
   return (
     <div
       style={{
-        width: 1311,
+        width: "100%",
         height: 40,
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        marginTop: 48,
       }}
     >
       <h1

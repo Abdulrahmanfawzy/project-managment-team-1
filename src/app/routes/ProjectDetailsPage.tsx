@@ -97,7 +97,7 @@ export default function ProjectDetailsPage() {
   ];
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[864px_416px] gap-8 w-full items-start max-w-[1312px] px-4">
+    <div className="grid grid-cols-1 lg:grid-cols-[864px_416px] gap-8 w-full items-start max-w-[1312px]">
       {/* Left Column */}
       <div className="flex flex-col gap-8 w-full">
         {/* Description */}
