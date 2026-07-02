@@ -7,11 +7,23 @@ import { TaskFilterSelect } from "./TaskFilterSelect";
 
 interface ToolbarProps {
   tasks: ApiTask[];
-  selectedProject: string;
-  onProjectChange: (value: string) => void;
+  selectedProjectId: string;
+  selectedProjectName: string;
+  searchQeury: string
+  setSelectedProjectId: (value: string) => void;
+  setSelectedProjectName: (value: string) => void;
+  setSearchQeury: (value: string) => void;
 }
 
-export function Toolbar({ tasks, selectedProject, onProjectChange }: ToolbarProps) {
+export function Toolbar({
+  tasks,
+  selectedProjectId,
+  selectedProjectName,
+  searchQeury,
+  setSelectedProjectId,
+  setSelectedProjectName,
+  setSearchQeury
+}: ToolbarProps) {
   // Derive unique projects once from the loaded tasks list
   const projects = useMemo(
     () =>
@@ -26,16 +38,24 @@ export function Toolbar({ tasks, selectedProject, onProjectChange }: ToolbarProp
   return (
     <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
       <div className="flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center lg:w-auto">
-        <SearchInput />
+        <SearchInput
+          value={searchQeury}
+          onValueChange={setSearchQeury}
+        />
         <ProjectSelect
           tasks={tasks}
-          value={selectedProject}
-          onValueChange={onProjectChange}
+          value={selectedProjectId}
+          onValueChange={setSelectedProjectId}
         />
-        <TaskFilterSelect />
+        <TaskFilterSelect
+          tasks={tasks}
+          value={selectedProjectName}
+          onValueChange={setSelectedProjectName}
+        />
       </div>
 
       <CreateTaskButton projects={projects} />
     </div>
   );
 }
+

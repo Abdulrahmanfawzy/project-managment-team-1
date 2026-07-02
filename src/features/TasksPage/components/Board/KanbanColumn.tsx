@@ -2,7 +2,7 @@ import { useState } from "react";
 import { MoreVertical } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import AddTask from "../Task/AddTask";
+import AddTask from "../TaskDialog/AddTask";
 import TaskCard from "./TaskCard";
 import type { ColumnId } from "../../data/data";
 import type { ApiTask } from "../../types/tasks";

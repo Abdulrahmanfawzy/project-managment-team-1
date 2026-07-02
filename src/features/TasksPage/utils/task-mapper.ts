@@ -34,11 +34,11 @@ export function mapApiTask(task: ApiTask): Task {
     description: task.description ?? "",
     priority: priorityMap[task.priority],
     comments: 0, // API has no comment count yet
-    date: task.due_date
-      ? new Date(task.due_date).toLocaleDateString("en-US", {
-          month: "short",
-          day: "numeric",
-        })
+    date: task.start_date
+      ? new Date(task.start_date).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      })
       : "—",
     avatars: task.assignees.map(
       (a) => `https://i.pravatar.cc/64?u=${encodeURIComponent(a.email)}`,

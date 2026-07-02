@@ -6,8 +6,8 @@ import AvatarGroup from "@/components/ui/avatar-group";
 import type { Priority } from "../../data/data";
 import type { ApiTask } from "../../types/tasks";
 import { mapApiTask } from "../../utils/task-mapper";
-import EditTask from "../Task/EditTask";
-import DeleteTaskDialog from "../Task/DeleteTaskDialog";
+import EditTask from "../TaskDialog/EditTask";
+import DeleteTaskDialog from "../TaskDialog/DeleteTask";
 
 const priorityStyles: Record<Priority, string> = {
   High: "bg-red-50 text-red-500",
