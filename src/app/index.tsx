@@ -14,7 +14,7 @@ import SignIn from "@/features/Auth/AuthPages/SignIn";
 import SignUp from "@/features/Auth/AuthPages/SignUp";
 import ForgotPassword from "@/features/Auth/AuthPages/ForgotPassword";
 import ResetPassword from "@/features/Auth/AuthPages/ResetPassword";
-import VerifyEmail from "@/features/Auth/AuthPages/VerifyOTP";
+import VerifyEmail from "@/features/Auth/AuthPages/VerifyEmail";
 import ReportsPage from "./routes/ReportsPage";
 import MeetingsPage from "./routes/MeetingsPage";
 import JoinMeetingPage from "@/app/routes/JoinMeetingPage";
