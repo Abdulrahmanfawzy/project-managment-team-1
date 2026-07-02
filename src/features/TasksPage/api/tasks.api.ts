@@ -18,4 +18,11 @@ export const tasksApi = {
   update: (id: number, data: UpdateTaskPayload) =>
     apiClient.post<ApiTask>(`/tasks/${id}`, toFormData({ ...data, _method: "PUT" })),
   delete: (id: number) => apiClient.delete<ApiTask>(`/tasks/${id}`),
+
+  /** Upload files to a task: POST /tasks/{taskId}/files */
+  uploadFiles: (url: string, taskId: number, files: File[]) => {
+    const formData = new FormData();
+    files.forEach((file) => formData.append("files[]", file));
+    return apiClient.post(url, formData);
+  },
 };

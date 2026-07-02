@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Plus, FileText, Calendar, Users, FolderKanban, Upload } from "lucide-react";
+import { Plus, FileText, Calendar, Users, FolderKanban, Upload, X } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import useCreateTask from "../../hooks/useCreateTask";
+import useUploadTaskFiles from "../../hooks/useUploadTaskFiles";
 import type { TaskPriority, TaskStatus } from "../../types/tasks";
 
 type FormValues = {
@@ -43,6 +44,8 @@ export default function AddTask({
   trigger,
 }: AddTaskProps) {
   const [open, setOpen] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { projectId: projectIdParam } = useParams();
 
   // Resolve the default project_id: prop > route param > 0 (user must pick)
@@ -50,6 +53,7 @@ export default function AddTask({
     projectIdProp ?? (projectIdParam ? Number(projectIdParam) : 0);
 
   const createTask = useCreateTask();
+  const uploadFiles = useUploadTaskFiles();
 
   const {
     register,
@@ -64,6 +68,25 @@ export default function AddTask({
       project_id: defaultProjectId > 0 ? defaultProjectId : (0 as unknown as number),
     },
   });
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setSelectedFiles((prev) => [...prev, ...Array.from(e.target.files!)]);
+    }
+    // Reset the input so the same file can be re-selected
+    e.target.value = "";
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    if (e.dataTransfer.files.length) {
+      setSelectedFiles((prev) => [...prev, ...Array.from(e.dataTransfer.files)]);
+    }
+  };
+
+  const removeFile = (index: number) => {
+    setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
+  };
 
   const onSubmit = (values: FormValues) => {
     // Parse comma-separated user IDs into a number array
@@ -86,9 +109,34 @@ export default function AddTask({
         user_ids: userIds,
       },
       {
-        onSuccess: () => {
-          reset();
-          setOpen(false);
+        onSuccess: (response) => {
+          // The API returns { data: { id, ... } }
+          const taskId = (response as unknown as { data: { id: number } }).data.id;
+
+          // Upload files if any were selected
+          if (selectedFiles.length > 0) {
+            uploadFiles.mutate(
+              { url: `/tasks/${taskId}/files`, taskId, files: selectedFiles },
+              {
+                onSuccess: () => {
+                  reset();
+                  setSelectedFiles([]);
+                  setOpen(false);
+                },
+                onError: (err) => {
+                  console.error("File upload failed:", err);
+                  // Still close — task was created successfully
+                  reset();
+                  setSelectedFiles([]);
+                  setOpen(false);
+                },
+              },
+            );
+          } else {
+            reset();
+            setSelectedFiles([]);
+            setOpen(false);
+          }
         },
         onError: (error) => {
           console.error("Create task failed:", error);
@@ -279,7 +327,23 @@ export default function AddTask({
             <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider pl-1">
               Add Task Files
             </span>
-            <div className="border border-dashed border-slate-200 dark:border-slate-800 rounded-xl p-6 flex flex-col items-center justify-center gap-2 bg-slate-50/20 dark:bg-slate-900/10 cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-900/20 transition-colors">
+
+            {/* Hidden file input */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              className="hidden"
+              onChange={handleFileSelect}
+            />
+
+            {/* Drop zone */}
+            <div
+              onClick={() => fileInputRef.current?.click()}
+              onDrop={handleDrop}
+              onDragOver={(e) => e.preventDefault()}
+              className="border border-dashed border-slate-200 dark:border-slate-800 rounded-xl p-6 flex flex-col items-center justify-center gap-2 bg-slate-50/20 dark:bg-slate-900/10 cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-900/20 transition-colors"
+            >
               <div className="size-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
                 <Upload className="size-4 text-muted-foreground" />
               </div>
@@ -287,6 +351,27 @@ export default function AddTask({
                 Drag and drop files or click to upload
               </p>
             </div>
+
+            {/* Selected files preview */}
+            {selectedFiles.length > 0 && (
+              <div className="space-y-1.5 pt-1">
+                {selectedFiles.map((file, index) => (
+                  <div
+                    key={`${file.name}-${index}`}
+                    className="flex items-center justify-between rounded-lg bg-slate-50 dark:bg-slate-900 px-3 py-2 text-xs"
+                  >
+                    <span className="truncate text-foreground">{file.name}</span>
+                    <button
+                      type="button"
+                      onClick={() => removeFile(index)}
+                      className="ml-2 text-muted-foreground hover:text-red-500 transition-colors"
+                    >
+                      <X className="size-3.5" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* API error banner */}
@@ -301,10 +386,14 @@ export default function AddTask({
           <div className="pt-1">
             <Button
               type="submit"
-              disabled={createTask.isPending}
+              disabled={createTask.isPending || uploadFiles.isPending}
               className="w-full h-12 bg-brand hover:bg-brand/90 text-white rounded-xl font-semibold shadow-lg shadow-brand/10 cursor-pointer disabled:opacity-60"
             >
-              {createTask.isPending ? "Creating…" : "Create Task"}
+              {createTask.isPending
+                ? "Creating…"
+                : uploadFiles.isPending
+                  ? "Uploading files…"
+                  : "Create Task"}
             </Button>
           </div>
         </form>
