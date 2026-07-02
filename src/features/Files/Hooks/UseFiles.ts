@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import { getDashboardFiles } from "../Api/Files";
-export const useDashboardFiles = () => {
+import { getFiles } from "../Api/Files";
+
+export const useFiles = () => {
   return useQuery({
-    queryKey: ["dashboardFiles"],
-    queryFn: getDashboardFiles,
+    queryKey: ["files"],
+    queryFn: getFiles,
   });
 };

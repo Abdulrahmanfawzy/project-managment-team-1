@@ -10,9 +10,14 @@ import type {
 export const projectFilesApi = {
   getAll: (projectId: number) =>
     apiClient.get<ProjectFilesResponse>(`projects/${projectId}/files`),
-  create: (projectId: number, data: UploadFilePayload) =>
+  // Upload via POST /files. With a valid projectId it attaches to that project
+  // ("Upload & Attach to Project"); without one it's a detached upload.
+  create: (projectId: number | undefined, data: UploadFilePayload) =>
     apiClient.post<UploadFileResponse>(
-      `projects/${projectId}/files`,
-      toFormData(data),
+      `files`,
+      toFormData({
+        ...data,
+        project_id: Number.isFinite(projectId) ? projectId : undefined,
+      }),
     ),
 };

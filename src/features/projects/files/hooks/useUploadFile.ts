@@ -12,11 +12,13 @@ const useUploadFile = () => {
       projectId,
       data,
     }: {
-      projectId: number;
+      projectId: number | undefined;
       data: UploadFilePayload;
     }) => projectFilesApi.create(projectId, data),
     onSuccess: () => {
+      // Refresh both the per-project list and the workspace-wide all-files list.
       queryClient.invalidateQueries({ queryKey: fileKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: ["files"] });
     },
   });
 };
