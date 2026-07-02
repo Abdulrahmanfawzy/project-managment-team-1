@@ -48,7 +48,7 @@ export const router = createBrowserRouter([
   { path: "/chats", element: <PlaceholderPage title="Chats" /> },
   { path: "/meetings", element: <MeetingsPage /> },
   {
-    path: "/meetings/join-meeting",
+    path: "/meetings/join-meeting/:meetingId",
     element: <JoinMeetingPage />,
   },
   { path: "/reports", element: <ReportsPage /> },

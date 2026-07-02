@@ -20,7 +20,7 @@ export default function MeetingCard({
   const borderStyle = "border border-[#F3F4F6]";
 
   const handleCardClick = () => {
-    navigate("/meetings/join-meeting");
+    navigate(`/meetings/join-meeting/${meeting.id}`);
   };
 
   return (
