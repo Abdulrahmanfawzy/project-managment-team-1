@@ -14,7 +14,7 @@ export default function DashboardTasks() {
   }
 
   return (
-    <div className="lg:col-span-3 space-y-4 bg-white rounded-lg p-5 shadow-sm flex flex-col justify-between overflow-scroll max-h-80 overflow-x-hidden">
+    <div className="lg:col-span-3 space-y-4 bg-white rounded-lg p-5 shadow-sm flex flex-col justify-between overflow-scroll max-h-80 overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
       <div className="flex justify-between items-center">
         <h2 className="text-black font-bold">Tasks</h2>
         <Link to="/tasks" className="text-blue-500 text-sm">

@@ -6,20 +6,20 @@ import { statistics } from "./Data/DashboardData";
 import DashboardTasks from "./DashboardTasks";
 import DashboardFiles from "./DashboardFiles";
 import DashboardActiveProjects from "./DashboardActiveFiles";
-import DashboardProgresses from "./DashboardTeams";
 import DashboardEvents from "./DashboardEvents";
 import AskAi from "./AskAi";
 import { useDashboardStats } from "@/features/Dashboard/hooks/UseDashboardStats";
 import DashboardTeams from "./DashboardTeams";
+import DashboardSkeleton from "./DashboardSkleton";
 
 export default function DashboardPage() {
   const { data, isPending, error } = useDashboardStats();
 
   if (isPending) {
     return (
-      <div className="container mx-auto px-4 my-6">
-        <Spinner />
-      </div>
+   
+        <DashboardSkeleton />
+    
     );
   }
 
@@ -32,7 +32,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="container m-auto px-4 my-6">
+    <div className="container   my-6">
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
         {statistics.map((item, index) => (
           <StatsCard
@@ -57,12 +57,7 @@ export default function DashboardPage() {
               {data?.data.completion_rate ?? 0}%
             </h2>
 
-            <div className="flex items-center gap-2">
-              <ArrowUpRight size={18} className="text-green-700" />
-              <span className="text-xs text-gray-500 md:text-sm">
-                +10% From last month
-              </span>
-            </div>
+         
           </div>
 
           <div>
