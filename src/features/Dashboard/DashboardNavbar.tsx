@@ -6,7 +6,7 @@ export default function Dashboard() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="p-4 shadow-sm text-black">
+    <div className="px-4 shadow-sm text-black">
       <div className="flex items-center justify-between lg:hidden">
         <h1 className="text-2xl font-semibold ">Collabspace</h1>
 
@@ -95,7 +95,6 @@ export default function Dashboard() {
 
           <div className="flex flex-col items-center text-center">
             <img src={profileImage} alt="Profile" className="w-12 h-12 rounded-full mb-2"/>
-
             <h2 >Mohamed Salah</h2>
             <p className="text-gray-600 text-sm">UI/UX</p>
           </div>

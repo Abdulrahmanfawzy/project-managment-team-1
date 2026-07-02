@@ -1,4 +1,5 @@
 import DashboardLayout from "@/components/layout/dashboard-layout";
+import PageContainer from "@/components/layout/PageContainer";
 import MeetingsHeader from "@/features/meetings/MeetingsHeader";
 import MonthFilter from "@/features/meetings/MonthFilter";
 import CalendarHeader from "@/features/meetings/CalendarHeader";
@@ -8,7 +9,7 @@ import { MOCK_MEETINGS } from "@/features/meetings/data/mockMeetings";
 export default function MeetingsPage() {
   return (
     <DashboardLayout>
-      <main className="flex-1 px-6 py-6 max-w-[1311px] mx-auto w-full">
+      <PageContainer>
         <MeetingsHeader />
         <MonthFilter month="December 2025" filter="This Week" />
 
@@ -16,7 +17,7 @@ export default function MeetingsPage() {
           <CalendarHeader />
           <CalendarGrid meetings={MOCK_MEETINGS} />
         </div>
-      </main>
+      </PageContainer>
     </DashboardLayout>
   );
 }

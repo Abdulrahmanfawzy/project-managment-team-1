@@ -46,7 +46,8 @@ const ProjectsTable: React.FC<Props> = ({ projects }) => {
       <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
         <table
           style={{
-            width: 1312,
+            width: "100%",
+            minWidth: 900,
             borderCollapse: "separate",
             borderSpacing: "0 12px",
           }}

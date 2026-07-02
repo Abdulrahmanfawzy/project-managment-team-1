@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import DashboardLayout from "@/components/layout/dashboard-layout";
+import PageContainer from "@/components/layout/PageContainer";
 import { Board } from "@/features/TasksPage/components/Board/Board";
 import { Toolbar } from "@/features/TasksPage/components/Toolbar/Toolbar";
 import { ToolbarSkeleton } from "@/features/TasksPage/components/Toolbar/ToolbarSkeleton";
@@ -31,7 +32,7 @@ export default function TasksPage() {
 
   return (
     <DashboardLayout>
-      <main className="space-y-6 p-6">
+      <PageContainer className="space-y-6">
         {isPending ? (
           <ToolbarSkeleton />
         ) : (
@@ -52,7 +53,7 @@ export default function TasksPage() {
           isError={isError}
           error={error}
         />
-      </main>
+      </PageContainer>
     </DashboardLayout>
   );
 }
