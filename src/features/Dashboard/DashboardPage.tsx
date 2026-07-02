@@ -5,7 +5,6 @@ import { statistics } from "./Data/DashboardData";
 import DashboardTasks from "./DashboardTasks";
 import DashboardFiles from "./DashboardFiles";
 import DashboardActiveProjects from "./DashboardActiveFiles";
-import DashboardProgresses from "./DashboardTeams";
 import DashboardEvents from "./DashboardEvents";
 import AskAi from "./AskAi";
 import { useDashboardStats } from "@/features/Dashboard/hooks/UseDashboardStats";
@@ -56,12 +55,7 @@ export default function DashboardPage() {
               {data?.data.completion_rate ?? 0}%
             </h2>
 
-            <div className="flex items-center gap-2">
-              <ArrowUpRight size={18} className="text-green-700" />
-              <span className="text-xs text-gray-500 md:text-sm">
-                +10% From last month
-              </span>
-            </div>
+         
           </div>
 
           <div>

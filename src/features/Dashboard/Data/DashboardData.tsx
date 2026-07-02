@@ -2,7 +2,7 @@
 import pdf from "@/assets/[CITYPNG.COM]PDF File Document Red Icon - 1000x1000 1.svg"
 import jsx from "@/assets/image 1837.svg"
 import sql from "@/assets/image 1838.svg"
-import { ClipboardCheck, ClipboardClock, ClipboardList } from "lucide-react"
+import { ClipboardCheck, ClipboardClock, ClipboardList, Image } from "lucide-react"
 export const statistics = [
   {
     key: "pending_tasks",
@@ -136,4 +136,18 @@ export const Tasks = [
     priorityColor: "text-[#2BA52E]",
     taskProgress:"42%",
   },
+]
+export const icons =[
+  {
+    img: pdf,
+  },
+  {
+    img: jsx,
+  },
+  {
+    img: sql,
+  },
+  {
+    img:<Image />
+  }
 ]
