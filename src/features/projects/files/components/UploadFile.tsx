@@ -40,7 +40,9 @@ export default function UploadFile() {
 
     uploadFile.mutate(
       {
-        projectId: Number(projectId),
+        // On a project page this attaches to the project; on the all-files
+        // page there's no projectId, so it uploads as a detached file.
+        projectId: projectId ? Number(projectId) : undefined,
         data: { name: values.name, file: values.file },
       },
       {
