@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { BriefcaseBusiness, FileText } from "lucide-react";
+import { BriefcaseBusiness, FileText, Pencil, Trash2 } from "lucide-react";
 import type { Project } from "@/types/project";
 import ProjectPriorityBadge from "./ProjectPriorityBadge";
 import AvatarGroup from "./AvatarGroup";
 import ProjectPriorityStatus from "./ProjectPriorityStatus";
+import EditProjectModal from "./components/EditProjectModal";  
+import ConfirmDialog from "@/components/shared/ConfirmDialog";
+import { useDeleteProject } from "./hooks/useDeleteProject";  
 
 interface Props {
   projects: Project[];
@@ -18,13 +21,25 @@ const COLUMNS = [
   "Files",
   "Teams",
   "Priority",
+  "",
 ];
-
-
-
 
 const ProjectsTable: React.FC<Props> = ({ projects }) => {
   const navigate = useNavigate();
+
+  const [editingProject, setEditingProject] = useState<Project | null>(null);
+  const [deletingProject, setDeletingProject] = useState<Project | null>(
+    null,
+  );
+
+  const { mutate: deleteProject, isPending: isDeleting } = useDeleteProject();
+
+  const handleConfirmDelete = () => {
+    if (!deletingProject) return;
+    deleteProject(deletingProject.id, {
+      onSuccess: () => setDeletingProject(null),
+    });
+  };
 
   return (
     <div style={{ width: "100%" }}>
@@ -175,6 +190,11 @@ const ProjectsTable: React.FC<Props> = ({ projects }) => {
                   <AvatarGroup members={project.team} />
                 </td>
 
+                <td style={{ padding: "16px", verticalAlign: "middle" }}>
+                  <ProjectPriorityBadge priority={project.priority} />
+                </td>
+
+                {/* Edit / Delete actions */}
                 <td
                   style={{
                     padding: "16px",
@@ -183,13 +203,63 @@ const ProjectsTable: React.FC<Props> = ({ projects }) => {
                     borderBottomRightRadius: "12px",
                   }}
                 >
-                  <ProjectPriorityBadge priority={project.priority} />
+                  <div
+                    style={{ display: "flex", alignItems: "center", gap: 12 }}
+                  >
+                    <button
+                      aria-label="Edit project"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setEditingProject(project);
+                      }}
+                      style={{
+                        border: "none",
+                        background: "transparent",
+                        cursor: "pointer",
+                        padding: 4,
+                        color: "#71717A",
+                      }}
+                    >
+                      <Pencil size={16} />
+                    </button>
+                    <button
+                      aria-label="Delete project"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setDeletingProject(project);
+                      }}
+                      style={{
+                        border: "none",
+                        background: "transparent",
+                        cursor: "pointer",
+                        padding: 4,
+                        color: "#EF4444",
+                      }}
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
+      <EditProjectModal
+        project={editingProject}
+        onClose={() => setEditingProject(null)}
+      />
+
+      <ConfirmDialog
+        open={!!deletingProject}
+        title="Delete this project?"
+        message={`Are you sure you want to delete "${deletingProject?.name}"? This action cannot be undone.`}
+        confirmLabel="Delete"
+        isLoading={isDeleting}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setDeletingProject(null)}
+      />
     </div>
   );
 };

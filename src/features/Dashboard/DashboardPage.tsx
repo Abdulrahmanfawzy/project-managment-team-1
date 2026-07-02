@@ -9,15 +9,16 @@ import DashboardEvents from "./DashboardEvents";
 import AskAi from "./AskAi";
 import { useDashboardStats } from "@/features/Dashboard/hooks/UseDashboardStats";
 import DashboardTeams from "./DashboardTeams";
+import DashboardSkeleton from "./DashboardSkleton";
 
 export default function DashboardPage() {
   const { data, isPending, error } = useDashboardStats();
 
   if (isPending) {
     return (
-      <div className="container mx-auto px-4 my-6">
-        <h2>Loading...</h2>
-      </div>
+   
+        <DashboardSkeleton />
+    
     );
   }
 
@@ -30,7 +31,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="container m-auto px-4 my-6">
+    <div className="container   my-6">
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
         {statistics.map((item, index) => (
           <StatsCard
