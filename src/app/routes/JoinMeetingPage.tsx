@@ -27,7 +27,7 @@ export default function JoinMeetingPage() {
             ) : (
               <JoinMeetingHeader meeting={data.data.meeting} />
             )}
-            <MeetingVedio />
+            <MeetingVedio title={data?.data.meeting.title} />
             <MeetingSummary />
           </div>
 

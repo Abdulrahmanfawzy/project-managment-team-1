@@ -1,14 +1,17 @@
 import { Play } from "lucide-react";
 
 import meetingView from "@/assets/MeetingView.png";
-import { meeting } from "../data/data";
 
-export default function MeetingVedio() {
+/**
+ * Meeting recording preview. The backend doesn't return a recording/thumbnail
+ * yet, so we show a fixed placeholder image. `title` is only used for alt text.
+ */
+export default function MeetingVedio({ title }: { title?: string }) {
   return (
     <div className="relative overflow-hidden rounded-2xl">
       <img
         src={meetingView}
-        alt={meeting.title}
+        alt={title ?? "Meeting recording"}
         className="h-full w-full object-cover"
       />
 
