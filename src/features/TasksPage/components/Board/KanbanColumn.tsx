@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { MoreVertical } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -6,6 +7,10 @@ import TaskCard from "./TaskCard";
 import type { ColumnId } from "../../data/data";
 import type { ApiTask } from "../../types/tasks";
 import { columnToStatus } from "../../utils/task-mapper";
+import { useUpdateTask } from "../../hooks/useUpdateTask";
+
+// Key used to carry the dragged task across the native drag-and-drop API.
+const DRAG_MIME = "application/x-task";
 
 const headerStyles: Record<ColumnId, { bg: string; dot: string }> = {
   todo: { bg: "bg-white", dot: "bg-slate-400" },
@@ -30,9 +35,60 @@ export default function KanbanColumn({
   showAdd = true,
 }: KanbanColumnProps) {
   const style = headerStyles[id];
+  const updateTask = useUpdateTask();
+  const [isDragOver, setIsDragOver] = useState(false);
+  const [draggingId, setDraggingId] = useState<number | null>(null);
+
+  // Move a dropped task into this column by persisting the new status.
+  // Mirrors the payload EditTask sends so nothing else about the task changes.
+  const moveTaskHere = (task: ApiTask) => {
+    const status = columnToStatus[id];
+    if (task.status === status) return; // dropped back on its own column
+
+    updateTask.mutate({
+      id: task.id,
+      data: {
+        project_id: task.project_id,
+        title: task.title,
+        start_date: task.start_date?.slice(0, 10) ?? "",
+        description: task.description ?? "",
+        priority: task.priority,
+        status,
+        // keep existing assignees (API requires ≥1)
+        user_ids: task.assignees.length
+          ? task.assignees.map((a) => a.id)
+          : [1],
+      },
+    });
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    const raw = e.dataTransfer.getData(DRAG_MIME);
+    if (!raw) return;
+    try {
+      moveTaskHere(JSON.parse(raw) as ApiTask);
+    } catch {
+      /* ignore malformed drag payloads */
+    }
+  };
 
   return (
-    <div className="flex flex-col overflow-hidden rounded-xl bg-white ring-1 ring-slate-200/70 overflow-y-auto max-h-[calc(100vh-11rem)]">
+    <div
+      onDragOver={(e) => {
+        // Only react to task drags so unrelated drops are ignored.
+        if (!e.dataTransfer.types.includes(DRAG_MIME)) return;
+        e.preventDefault();
+        setIsDragOver(true);
+      }}
+      onDragLeave={() => setIsDragOver(false)}
+      onDrop={handleDrop}
+      className={cn(
+        "flex flex-col overflow-hidden rounded-xl bg-white ring-1 ring-slate-200/70 overflow-y-scroll max-h-[calc(100vh-11rem)] transition-shadow",
+        isDragOver && "ring-2 ring-brand",
+      )}
+    >
       <div
         className={cn("flex items-center justify-between px-4 py-3", style.bg)}
       >
@@ -49,7 +105,22 @@ export default function KanbanColumn({
         {showAdd && <AddTask status={columnToStatus[id]} />}
 
         {tasks.map((task) => (
-          <TaskCard key={task.id} task={task} />
+          <div
+            key={task.id}
+            draggable
+            onDragStart={(e) => {
+              e.dataTransfer.setData(DRAG_MIME, JSON.stringify(task));
+              e.dataTransfer.effectAllowed = "move";
+              setDraggingId(task.id);
+            }}
+            onDragEnd={() => setDraggingId(null)}
+            className={cn(
+              "cursor-grab active:cursor-grabbing transition-opacity",
+              draggingId === task.id && "opacity-40",
+            )}
+          >
+            <TaskCard task={task} />
+          </div>
         ))}
       </div>
     </div>

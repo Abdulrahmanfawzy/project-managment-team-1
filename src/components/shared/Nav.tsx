@@ -1,19 +1,13 @@
 import React from "react";
 import SelectDropdown from "@/components/shared/select-dropdown";
-import { useTranslation } from "react-i18next";
 
 const languages = [
-  { label: "English", value: "en" },
-  { label: "العربية", value: "ar" },
+  { label: "English", value: "English" },
+  { label: "العربية", value: "العربية" },
 ];
 
 export default function Nav() {
-  const { i18n } = useTranslation();
-  const currentLang = i18n.language?.startsWith("ar") ? "ar" : "en";
-
-  const handleLanguageChange = (lang: string) => {
-    i18n.changeLanguage(lang);
-  };
+  const [position, setPosition] = React.useState("English");
 
   return (
     <nav className="flex justify-between items-center py-2 sm:py-4 px-5">
@@ -24,8 +18,8 @@ export default function Nav() {
       </div>
       <div>
         <SelectDropdown
-          value={currentLang}
-          onValueChange={handleLanguageChange}
+          value={position}
+          onValueChange={setPosition}
           options={languages}
         />
       </div>

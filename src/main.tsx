@@ -5,11 +5,11 @@ import "./index.css";
 import { router } from "./app";
 import AppProviders from "./app/providers/AppProviders";
 import "./i18n";
-import { QueryClientProvider } from '@tanstack/react-query'
-import { queryClient } from './lib/queryClient'
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <AppProviders>
+      <RouterProvider router={router} />
+    </AppProviders>
   </StrictMode>,
-)
+);
