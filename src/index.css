@@ -149,3 +149,9 @@
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
 }
+
+@layer utilities {
+  .scrollbar {
+    @apply scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100;
+  }
+}

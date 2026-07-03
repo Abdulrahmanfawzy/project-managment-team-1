@@ -85,7 +85,7 @@ export default function KanbanColumn({
       onDragLeave={() => setIsDragOver(false)}
       onDrop={handleDrop}
       className={cn(
-        "flex flex-col overflow-hidden rounded-xl bg-white ring-1 ring-slate-200/70 overflow-y-scroll max-h-[calc(100vh-11rem)] transition-shadow",
+        "flex flex-col overflow-hidden scrollbar rounded-xl bg-white ring-1 ring-slate-200/70 overflow-y-auto max-h-[calc(100vh-11rem)] transition-shadow",
         isDragOver && "ring-2 ring-brand",
       )}
     >

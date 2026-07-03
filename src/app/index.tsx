@@ -19,6 +19,7 @@ import ReportsPage from "./routes/ReportsPage";
 import MeetingsPage from "./routes/MeetingsPage";
 import JoinMeetingPage from "@/app/routes/JoinMeetingPage";
 import FilesPage from "./routes/FilesPage";
+import ProtectedRoute from "@/components/layout/ProtectedRoute";
 
 export const router = createBrowserRouter([
   { path: "/", element: <Navigate to="/signin" replace /> },
@@ -32,27 +33,32 @@ export const router = createBrowserRouter([
       { path: "/verify-email", element: <VerifyEmail /> },
     ],
   },
-  { path: "/dashboard", element: <DashboardPage /> },
-  { path: "/projects", element: <AllProjectsPage /> },
   {
-    path: "/projects/:projectId",
-    element: <ProjectLayout />,
+    element: <ProtectedRoute />,
     children: [
-      { index: true, element: <Navigate to="overview" replace /> },
-      { path: "overview", element: <ProjectDetailsPage /> },
-      { path: "tasks", element: <KanbanBoard /> },
-      { path: "teams", element: <TeamsSection /> },
-      { path: "files", element: <FilesSection /> },
+      { path: "/dashboard", element: <DashboardPage /> },
+      { path: "/projects", element: <AllProjectsPage /> },
+      {
+        path: "/projects/:projectId",
+        element: <ProjectLayout />,
+        children: [
+          { index: true, element: <Navigate to="overview" replace /> },
+          { path: "overview", element: <ProjectDetailsPage /> },
+          { path: "tasks", element: <KanbanBoard /> },
+          { path: "teams", element: <TeamsSection /> },
+          { path: "files", element: <FilesSection /> },
+        ],
+      },
+      { path: "/tasks", element: <TasksPage /> },
+      { path: "/files", element: <FilesPage /> },
+      { path: "/chats", element: <PlaceholderPage title="Chats" /> },
+      { path: "/meetings", element: <MeetingsPage /> },
+      {
+        path: "/meetings/join-meeting/:meetingId",
+        element: <JoinMeetingPage />,
+      },
+      { path: "/reports", element: <ReportsPage /> },
     ],
   },
-  { path: "/tasks", element: <TasksPage /> },
-  { path: "/files", element: <FilesPage /> },
-  { path: "/chats", element: <PlaceholderPage title="Chats" /> },
-  { path: "/meetings", element: <MeetingsPage /> },
-  {
-    path: "/meetings/join-meeting/:meetingId",
-    element: <JoinMeetingPage />,
-  },
-  { path: "/reports", element: <ReportsPage /> },
   { path: "*", element: <PlaceholderPage title="Page not found" /> },
 ]);
