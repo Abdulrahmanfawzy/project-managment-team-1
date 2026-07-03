@@ -5,10 +5,19 @@ import { ChevronDown, ChevronLeft, ChevronRight, Check } from "lucide-react";
 
 interface MonthFilterProps {
   month: string;
-  filter: string;
+  filter?: string;
+  onPrev?: () => void;
+  onNext?: () => void;
+  onToday?: () => void;
 }
 
-export default function MonthFilter({ month, filter: initialFilter }: MonthFilterProps) {
+export default function MonthFilter({
+  month,
+  filter: initialFilter = "This Week",
+  onPrev,
+  onNext,
+  onToday,
+}: MonthFilterProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState(initialFilter);
 
@@ -17,11 +26,19 @@ export default function MonthFilter({ month, filter: initialFilter }: MonthFilte
   return (
     <div className="flex items-center justify-between mb-6 relative">
       <div className="flex items-center gap-4">
-        <button className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
+        <button
+          onClick={onPrev}
+          className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+          aria-label="Previous days"
+        >
           <ChevronLeft size={18} className="text-[#1E1E2D]" />
         </button>
         <h2 className="text-[18px] font-semibold text-[#1E1E2D]">{month}</h2>
-        <button className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
+        <button
+          onClick={onNext}
+          className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+          aria-label="Next days"
+        >
           <ChevronRight size={18} className="text-[#1E1E2D]" />
         </button>
       </div>
@@ -44,6 +61,7 @@ export default function MonthFilter({ month, filter: initialFilter }: MonthFilte
                   onClick={() => {
                     setSelectedFilter(option);
                     setIsOpen(false);
+                    if (option === "Today") onToday?.();
                   }}
                   className="w-full flex items-center justify-between px-4 py-2 text-[13px] text-[#556987] hover:text-[#1E1E2D] hover:bg-[#F8FAFC] transition-colors text-left"
                 >

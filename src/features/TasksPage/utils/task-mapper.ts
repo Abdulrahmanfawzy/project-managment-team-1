@@ -41,7 +41,9 @@ export function mapApiTask(task: ApiTask): Task {
       })
       : "—",
     avatars: task.assignees.map(
-      (a) => `https://i.pravatar.cc/64?u=${encodeURIComponent(a.email)}`,
+      (a) =>
+        a.avatar_url ??
+        `https://i.pravatar.cc/64?u=${encodeURIComponent(a.email)}`,
     ),
     progress: task.status === "in_progress" ? task.progress : undefined,
   };
