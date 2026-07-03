@@ -5,6 +5,7 @@ import {
   mapApiProjectDetailsToProjectDetails,
   computeTaskStats,
 } from "../Api/projectDetails.mapper";
+import { buildProjectWorkload } from "../utils/workloadChart";
 import type { ProjectDetails } from "@/types/project";
 
 export function useProjectDetails(projectId: string | undefined) {
@@ -19,7 +20,18 @@ export function useProjectDetails(projectId: string | undefined) {
 
       const taskStats = computeTaskStats(tasksRes.data, Number(projectId));
 
-      return mapApiProjectDetailsToProjectDetails(projectRes.data, taskStats);
+      const chartData = buildProjectWorkload(
+        tasksRes.data,
+        Number(projectId),
+        projectRes.data.start_date,
+        projectRes.data.deadline,
+      );
+
+      return mapApiProjectDetailsToProjectDetails(
+        projectRes.data,
+        taskStats,
+        chartData,
+      );
     },
     enabled: !!projectId,
   });

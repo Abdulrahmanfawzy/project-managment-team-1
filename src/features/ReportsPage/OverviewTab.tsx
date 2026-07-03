@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FileText, Loader2 } from "lucide-react";
 import { useProfileActivity } from "./hooks/useProfileActivity";
+import { useProfile } from "./hooks/useProfile";
 import PaginationControls from "./PaginationControls";
 import type { ProfileActivity } from "./api/profile.api";
 
@@ -19,6 +20,7 @@ function timeAgo(iso: string): string {
 export default function OverviewTab() {
   const [page, setPage] = useState(1);
   const { data, isLoading, isError, isFetching } = useProfileActivity(page);
+  const { data: profile } = useProfile();
 
   // Normalise response shape
   const activities: ProfileActivity[] = Array.isArray(data)
@@ -34,12 +36,15 @@ export default function OverviewTab() {
       {/* About */}
       <div className="flex flex-col gap-3">
         <h2 className="text-xl font-bold text-slate-900 tracking-tight">About</h2>
-        <p className="text-sm md:text-base text-slate-600 leading-relaxed max-w-4xl">
-          Experienced UI/UX Designer with over 5 years of expertise in creating user-centered digital
-          experiences. Passionate about design systems, accessibility, and leading creative teams to deliver
-          exceptional products. Strong background in user research, wireframe, prototyping, and front-end
-          development.
-        </p>
+        {profile?.about ? (
+          <p className="text-sm md:text-base text-slate-600 leading-relaxed max-w-4xl whitespace-pre-line">
+            {profile.about}
+          </p>
+        ) : (
+          <p className="text-sm md:text-base text-slate-400 italic leading-relaxed max-w-4xl">
+            No bio added yet.
+          </p>
+        )}
       </div>
 
       {/* Recent Activities */}
@@ -63,9 +68,9 @@ export default function OverviewTab() {
         ) : (
           <>
             <div className="flex flex-col gap-3 max-w-4xl">
-              {activities.map((activity) => (
+              {activities.map((activity, i) => (
                 <div
-                  key={activity.id}
+                  key={activity.id ?? i}
                   className="flex items-center justify-between p-4 bg-white hover:bg-slate-50/50 rounded-xl border border-slate-100/80 shadow-sm transition-all duration-300"
                 >
                   <div className="flex items-center gap-3.5">

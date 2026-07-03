@@ -1,6 +1,6 @@
 import { ArrowUpRight, Gauge } from "lucide-react";
 import StatsCard from "@/components/shared/StatsCard";
-import Charts from "@/components/ui/chart";
+import DashboardOverviewChart from "./DashboardOverviewChart";
 import { statistics } from "./Data/DashboardData";
 import DashboardTasks from "./DashboardTasks";
 import DashboardFiles from "./DashboardFiles";
@@ -67,7 +67,7 @@ export default function DashboardPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 mt-5 w-full">
         <div className="lg:col-span-6 bg-white rounded-lg">
-          <Charts />
+          <DashboardOverviewChart />
         </div>
 
         <DashboardActiveProjects />

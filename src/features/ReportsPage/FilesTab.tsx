@@ -1,4 +1,5 @@
-import { Download, Loader2 } from "lucide-react";
+import { Download, FileText, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { useProfileFiles } from "./hooks/useProfileFiles";
 import type { ProfileFile } from "./api/profile.api";
 
@@ -21,37 +22,33 @@ function timeAgo(iso: string): string {
   return `${days}d ago`;
 }
 
-// Custom PDF document icon with a folded corner and PDF label
-const PdfIcon = () => (
-  <svg
-    className="w-10 h-12 shrink-0 transition-transform duration-300 group-hover:scale-105"
-    viewBox="0 0 40 48"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    {/* Main Red Page Body */}
-    <path
-      d="M0 4C0 1.79086 1.79086 0 4 0H28L40 12V44C40 46.2091 38.2091 48 36 48H4C1.79086 48 0 46.2091 0 44V4Z"
-      fill="#EF4444"
-    />
-    {/* Folded Corner flap */}
-    <path
-      d="M28 0V8C28 10.2091 29.7909 12 32 12H40L28 0Z"
-      fill="#F87171"
-    />
-    {/* PDF text label */}
-    <text
-      x="7"
-      y="34"
-      fill="white"
-      fontSize="9"
-      fontWeight="900"
-      fontFamily="Inter, sans-serif"
-    >
-      PDF
-    </text>
-  </svg>
-);
+// Type badge label + colours, matching the project/dashboard file cards.
+const fileTypeMeta: Record<string, { label: string; wrap: string }> = {
+  pdf: { label: "PDF", wrap: "bg-red-50 text-red-500" },
+  doc: { label: "DOC", wrap: "bg-blue-50 text-blue-500" },
+  xls: { label: "XLS", wrap: "bg-green-50 text-green-600" },
+  ppt: { label: "PPT", wrap: "bg-orange-50 text-orange-500" },
+  zip: { label: "ZIP", wrap: "bg-purple-50 text-purple-500" },
+  img: { label: "IMG", wrap: "bg-amber-50 text-amber-500" },
+  file: { label: "FILE", wrap: "bg-slate-100 text-slate-500" },
+};
+
+/** Pick a badge kind from the file's mime type, falling back to its extension. */
+function getFileMeta(file: ProfileFile) {
+  const mime = (file.mime_type ?? "").toLowerCase();
+  const ext = (file.name.split(".").pop() ?? "").toLowerCase();
+  const is = (m: string, ...exts: string[]) =>
+    mime.includes(m) || exts.includes(ext);
+
+  if (mime.startsWith("image/") || ["png", "jpg", "jpeg", "gif", "webp", "svg"].includes(ext))
+    return fileTypeMeta.img;
+  if (is("pdf", "pdf")) return fileTypeMeta.pdf;
+  if (is("word", "doc", "docx")) return fileTypeMeta.doc;
+  if (is("sheet", "excel", "csv", "xls", "xlsx")) return fileTypeMeta.xls;
+  if (is("presentation", "powerpoint", "ppt", "pptx")) return fileTypeMeta.ppt;
+  if (is("zip", "rar", "7z", "gz", "tar")) return fileTypeMeta.zip;
+  return fileTypeMeta.file;
+}
 
 export default function FilesTab() {
   const { data: rawData, isLoading, isError } = useProfileFiles();
@@ -88,36 +85,53 @@ export default function FilesTab() {
   return (
     <div className="py-6 w-full">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {files.map((file) => (
-          <div
-            key={file.id}
-            className="flex items-center justify-between p-4 bg-white rounded-xl border border-slate-100 shadow-sm hover:shadow-md hover:border-slate-200 transition-all duration-300 group cursor-pointer"
-          >
-            {/* Left section: Icon and details */}
-            <div className="flex items-center gap-4">
-              <PdfIcon />
-              <div className="flex flex-col gap-0.5">
-                <span className="text-sm font-semibold text-slate-800 group-hover:text-blue-600 transition-colors duration-200">
-                  {file.name}
-                </span>
-                <span className="text-[11px] text-slate-400 font-normal">
-                  {formatSize(file.size)} • {timeAgo(file.created_at)}
-                </span>
-              </div>
-            </div>
-
-            {/* Right section: Download action */}
-            <a
-              href={file.path}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-2 hover:bg-slate-50 active:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-600 transition-colors duration-200"
-              aria-label="Download file"
+        {files.map((file) => {
+          const meta = getFileMeta(file);
+          return (
+            <div
+              key={file.id}
+              className="flex items-center justify-between gap-3 p-4 bg-white rounded-xl border border-slate-100 shadow-sm hover:shadow-md hover:border-slate-200 transition-all duration-300 group"
             >
-              <Download size={18} />
-            </a>
-          </div>
-        ))}
+              {/* Left section: icon and details */}
+              <div className="flex items-center gap-3 min-w-0">
+                <div
+                  className={cn(
+                    "relative flex size-11 shrink-0 items-center justify-center rounded-xl",
+                    meta.wrap,
+                  )}
+                >
+                  <FileText className="size-5" />
+                  <span className="absolute -bottom-1 rounded px-1 text-[9px] font-bold leading-tight">
+                    {meta.label}
+                  </span>
+                </div>
+                <div className="flex flex-col gap-0.5 min-w-0">
+                  <span
+                    className="text-sm font-semibold text-slate-800 group-hover:text-blue-600 transition-colors duration-200 truncate"
+                    title={file.name}
+                  >
+                    {file.name}
+                  </span>
+                  <span className="text-[11px] text-slate-400 font-normal">
+                    {formatSize(file.size)} • {timeAgo(file.created_at)}
+                  </span>
+                </div>
+              </div>
+
+              {/* Right section: Download action */}
+              <a
+                href={file.path}
+                target="_blank"
+                rel="noopener noreferrer"
+                download
+                className="shrink-0 p-2 hover:bg-slate-50 active:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-600 transition-colors duration-200"
+                aria-label={`Download ${file.name}`}
+              >
+                <Download size={18} />
+              </a>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

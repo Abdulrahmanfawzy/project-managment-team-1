@@ -4,9 +4,29 @@ import { Link, NavLink } from "react-router-dom";
 
 import { cn } from "@/lib/utils";
 import { navItems } from "./nav-items";
+import { useProfile } from "@/features/ReportsPage/hooks/useProfile";
+
+/** Build up-to-two-letter initials from a name. */
+function initials(name: string): string {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0]?.toUpperCase() ?? "")
+    .join("");
+}
 
 export default function AppHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { data: profile } = useProfile();
+
+  const name = profile?.name ?? "";
+  const roleLabel =
+    profile?.job_title ||
+    (typeof profile?.roles?.[0] === "string"
+      ? (profile?.roles?.[0] as string)
+      : (profile?.roles?.[0] as { name?: string })?.name) ||
+    "";
 
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
     cn(
@@ -66,19 +86,22 @@ export default function AppHeader() {
             <span className="absolute -top-0.5 right-0 size-2 rounded-full bg-red-500 ring-2 ring-white" />
           </button>
 
-          <div className="flex items-center gap-2">
+          <Link to="/reports" className="flex items-center gap-2">
             <div className="hidden text-right sm:block">
               <p className="text-sm font-medium leading-tight text-text-h">
-                Mohamed Salah
+                {name || "—"}
               </p>
-              <p className="text-xs text-muted-foreground">UI/UX</p>
+              {roleLabel && (
+                <p className="text-xs text-muted-foreground">{roleLabel}</p>
+              )}
             </div>
-            <img
-              src="https://i.pravatar.cc/64?img=12"
-              alt="Mohamed Salah"
-              className="size-9 rounded-full object-cover"
-            />
-          </div>
+            <div
+              className="flex size-9 items-center justify-center rounded-full bg-brand/10 text-sm font-semibold text-brand select-none"
+              aria-label={name}
+            >
+              {initials(name) || "?"}
+            </div>
+          </Link>
         </div>
       </div>
 

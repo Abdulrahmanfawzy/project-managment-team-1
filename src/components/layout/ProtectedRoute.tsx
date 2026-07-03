@@ -1,4 +1,5 @@
 import { Navigate, Outlet } from "react-router-dom";
+import { Toaster } from "sonner";
 import { DEV_TOKEN } from "@/constants/token";
 
 export default function ProtectedRoute() {
@@ -8,5 +9,10 @@ export default function ProtectedRoute() {
     return <Navigate to="/signin" replace />;
   }
 
-  return <Outlet />;
+  return (
+    <>
+      <Toaster />
+      <Outlet />
+    </>
+  );
 }

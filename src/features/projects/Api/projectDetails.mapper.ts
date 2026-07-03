@@ -1,4 +1,4 @@
-import type { ProjectDetails } from "@/types/project";
+import type { ChartDataItem, ProjectDetails } from "@/types/project";
 import type { ApiProjectDetails } from "./projectsdetailsTypes";
 import type { ApiTask } from "./tasksTypes";
 
@@ -43,6 +43,7 @@ export function computeTaskStats(
 export function mapApiProjectDetailsToProjectDetails(
   api: ApiProjectDetails,
   taskStats: TaskStats,
+  chartData: ChartDataItem[] = [],
 ): ProjectDetails {
   return {
     id: String(api.id),
@@ -66,7 +67,7 @@ export function mapApiProjectDetailsToProjectDetails(
       avatarUrl: avatarFor(t.display_name ?? t.name),
       role: "",
     })),
-    // Not provided by the API yet — empty until backend adds analytics data
-    chartData: [],
+    // Remaining-workload series computed from the project's tasks + dates.
+    chartData,
   };
 }

@@ -22,7 +22,7 @@ export default function ReportsPageContent() {
 
       {/* Conditionally render Tabs OR Edit Form */}
       {isEditing ? (
-        <ProfileEditForm />
+        <ProfileEditForm onSuccess={() => setIsEditing(false)} />
       ) : (
         <>
           <ProfileTabs

@@ -8,29 +8,80 @@ import {
   YAxis,
   Tooltip,
 } from "recharts";
-import { ChevronDown } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+export interface ChartFilterOption {
+  label: string;
+  value: string;
+}
+
+interface ChartFilter {
+  value: string;
+  options: ChartFilterOption[];
+  onChange: (value: string) => void;
+}
 
 interface ChartsProps {
   data: { month: string; value: number }[];
+  /** Title shown above the chart. */
+  title?: string;
+  /** Formats the Y-axis ticks. Defaults to a plain number. */
+  yTickFormatter?: (value: number) => string;
+  /** Series name shown in the tooltip. */
+  valueName?: string;
+  /** Optional "project" dropdown; omit to hide it. */
+  projectFilter?: ChartFilter;
+  /** Optional "time range" dropdown; omit to hide it. */
+  rangeFilter?: ChartFilter;
 }
 
-export default function Chart({ data }: ChartsProps) {
+/** Borderless dropdown styled to match the chart header. */
+function HeaderFilter({ value, options, onChange }: ChartFilter) {
+  return (
+    <Select value={value} onValueChange={onChange}>
+      <SelectTrigger
+        size="sm"
+        className="h-auto border-0 bg-transparent p-0 text-xs font-medium text-slate-500 shadow-none hover:text-slate-900 focus-visible:ring-0 dark:bg-transparent"
+      >
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent align="end">
+        {options.map((opt) => (
+          <SelectItem key={opt.value} value={opt.value}>
+            {opt.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+}
+
+export default function Chart({
+  data,
+  title = "Project overview",
+  yTickFormatter = (v) => `${v}`,
+  valueName = "Remaining work",
+  projectFilter,
+  rangeFilter,
+}: ChartsProps) {
   return (
     <Card className="p-5 bg-white border border-[#F3F4F6] rounded-[16px] shadow-sm">
       <div className="flex justify-between items-center mb-6">
-        <h3 className="text-lg font-semibold text-slate-900">
-          Project overview
-        </h3>
-        <div className="flex gap-4 text-xs font-medium text-slate-500">
-          <button className="flex items-center gap-1 hover:text-slate-900 transition-colors">
-            All Projects <ChevronDown size={14} />
-          </button>
-          <button className="flex items-center gap-1 hover:text-slate-900 transition-colors">
-            This Year <ChevronDown size={14} />
-          </button>
-        </div>
+        <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
+        {(projectFilter || rangeFilter) && (
+          <div className="flex items-center gap-4">
+            {projectFilter && <HeaderFilter {...projectFilter} />}
+            {rangeFilter && <HeaderFilter {...rangeFilter} />}
+          </div>
+        )}
       </div>
 
       <div className="h-[220px] w-full">
@@ -63,12 +114,14 @@ export default function Chart({ data }: ChartsProps) {
               fontSize={12}
               tickLine={false}
               axisLine={false}
-              tickFormatter={(v) => `${v / 1000}k`}
+              tickFormatter={(v) => yTickFormatter(v)}
+              allowDecimals={false}
             />
             <Tooltip cursor={{ stroke: "#E2E8F0", strokeWidth: 1 }} />
             <Area
               type="monotone"
               dataKey="value"
+              name={valueName}
               stroke="#2563EB"
               strokeWidth={2}
               fill="url(#figmaVectorGradient)"
