@@ -2,6 +2,7 @@ export interface MeetingParticipant {
   id: string;
   name: string;
   email: string;
+  avatar_url?: string;
 }
 
 export interface MeetingCreator {
@@ -50,63 +51,40 @@ export interface MeetingResponse {
   paginate: null;
 }
 
-//   {
-//     "success": true,
-//     "message": "Meeting retrieved successfully.",
-//     "data": {
-//         "meeting": {
-//             "id": 3,
-//             "title": "Sprint Planning",
-//             "description": "Weekly sprint planning session",
-//             "starts_at": "2026-07-03 10:00:00",
-//             "ends_at": "2026-07-07 11:30:00",
-//             "date": "2026-07-03",
-//             "start_time": "10:00",
-//             "end_time": "11:30",
-//             "meeting_link": "https://meet.google.com/abc-defg-hij",
-//             "location": "Room A / Online",
-//             "project_id": 1,
-//             "created_by": 5,
-//             "creator": {
-//                 "id": 5,
-//                 "name": "hananAdeeb",
-//                 "email": "hanan.bayazeed56@gmail.com"
-//             },
-//             "project": {
-//                 "id": 1,
-//                 "name": "Updated Project"
-//             },
-//             "participants": [
-//                 {
-//                     "id": 1,
-//                     "name": "abanoubtalaat",
-//                     "email": "abanoubtalaat555@gmail.com"
-//                 },
-//                 {
-//                     "id": 2,
-//                     "name": "Test User",
-//                     "email": "test@example.com"
-//                 },
-//                 {
-//                     "id": 3,
-//                     "name": "abanoubtalaat",
-//                     "email": "abdo.fawzy@gmail.com"
-//                 },
-//                 {
-//                     "id": 5,
-//                     "name": "hananAdeeb",
-//                     "email": "hanan.bayazeed56@gmail.com"
-//                 }
-//             ],
-//             "teams": [
-//                 {
-//                     "id": 1,
-//                     "name": "Backend Team"
-//                 }
-//             ],
-//             "created_at": "2026-07-02 13:24:43",
-//             "updated_at": "2026-07-02 13:24:43"
-//         }
-//     },
-//     "paginate": null
-// }
+export interface MeetingsListResponse {
+  success: boolean;
+  message: string;
+  data: {
+    meetings: Meeting[];
+  };
+  paginate: unknown;
+}
+
+/** A user as returned inside a team's `members` array. */
+export interface TeamMemberUser {
+  id: number;
+  name: string;
+  email: string;
+  avatar_url?: string;
+}
+
+/** A team from `GET /teams`, including its inline members. */
+export interface TeamWithMembers {
+  id: number;
+  name: string;
+  display_name: string | null;
+  members: TeamMemberUser[];
+  members_count: number;
+}
+
+export interface CreateMeetingPayload {
+  title: string;
+  description?: string;
+  starts_at: string; // "YYYY-MM-DD HH:MM:SS"
+  ends_at: string; // "YYYY-MM-DD HH:MM:SS"
+  meeting_link?: string;
+  location?: string;
+  project_id: number;
+  team_ids?: number[];
+  user_ids?: number[];
+}

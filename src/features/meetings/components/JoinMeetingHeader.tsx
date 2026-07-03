@@ -5,10 +5,10 @@ import AvatarGroup from "@/components/ui/avatar-group";
 import type { Meeting } from "../Types/meeting.types";
 
 export default function JoinMeetingHeader({ meeting }: { meeting: Meeting }) {
-  // The API has no avatar field, so derive a stable one from each email
-  // (same convention used across the app, e.g. the task board).
+  // Prefer the backend avatar; fall back to a stable per-email one.
   const avatars = meeting.participants.map(
-    (p) => `https://i.pravatar.cc/64?u=${encodeURIComponent(p.email)}`,
+    (p) =>
+      p.avatar_url ?? `https://i.pravatar.cc/64?u=${encodeURIComponent(p.email)}`,
   );
 
   return (

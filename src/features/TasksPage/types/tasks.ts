@@ -7,6 +7,7 @@ export interface TaskAssignee {
   id: number;
   name: string;
   email: string;
+  avatar_url?: string;
 }
 
 export interface TaskProject {

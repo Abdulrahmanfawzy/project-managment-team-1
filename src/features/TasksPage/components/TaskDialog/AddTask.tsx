@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Plus, FileText, Calendar, Users, FolderKanban, Upload } from "lucide-react";
+import { Plus, FileText, Calendar, FolderKanban, Upload } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -11,6 +11,11 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import MultiSelectDropdown, {
+  type MultiOption,
+} from "@/components/shared/MultiSelectDropdown";
+import { useTeams } from "@/features/Dashboard/hooks/UseTeams";
+import type { TeamWithMembers } from "@/features/meetings/Types/meeting.types";
 import useCreateTask from "../../hooks/useCreateTask";
 import type { TaskPriority, TaskStatus } from "../../types/tasks";
 
@@ -21,7 +26,7 @@ type FormValues = {
   priority: TaskPriority;
   status: TaskStatus;
   project_id: number;
-  user_ids: string; // comma-separated IDs entered by user
+  user_ids: string[]; // selected assignee user IDs
 };
 
 export interface ProjectOption {
@@ -51,6 +56,27 @@ export default function AddTask({
 
   const createTask = useCreateTask();
 
+  // Assignee options = the members across all teams (deduped by user id).
+  const { data: teamsResp } = useTeams();
+  const memberOptions: MultiOption[] = (() => {
+    const teams: TeamWithMembers[] =
+      (teamsResp as { data?: TeamWithMembers[] })?.data ?? [];
+    const byId = new Map<number, MultiOption>();
+    for (const team of teams) {
+      for (const m of team.members) {
+        if (!byId.has(m.id)) {
+          byId.set(m.id, {
+            value: String(m.id),
+            label: m.name,
+            sublabel: m.email,
+            avatarUrl: m.avatar_url,
+          });
+        }
+      }
+    }
+    return [...byId.values()];
+  })();
+
   const {
     register,
     handleSubmit,
@@ -62,6 +88,7 @@ export default function AddTask({
       priority: "medium",
       status,
       project_id: defaultProjectId > 0 ? defaultProjectId : (0 as unknown as number),
+      user_ids: [],
     },
   });
 
@@ -79,13 +106,10 @@ export default function AddTask({
 
   const onSubmit = async (values: FormValues) => {
     setIsSubmitting(true);
-    // Parse comma-separated user IDs into a number array
-    const userIds = values.user_ids
-      ? values.user_ids
-        .split(",")
-        .map((s) => Number(s.trim()))
-        .filter((n) => !isNaN(n) && n > 0)
-      : [1]; // fallback to user ID 1 if nothing entered
+    // Selected assignee IDs → numbers; fall back to user #1 if none picked
+    // (the API requires at least one assignee).
+    const userIds =
+      values.user_ids.length > 0 ? values.user_ids.map(Number) : [1];
 
     createTask.mutate(
       {
@@ -291,23 +315,26 @@ export default function AddTask({
             />
           </div>
 
-          {/* Assignee IDs */}
+          {/* Assignees */}
           <div className="relative">
             <label className="absolute -top-2 left-3 bg-white dark:bg-slate-950 px-1 text-xs text-muted-foreground font-medium z-10">
-              Assignee IDs
+              Assignees
             </label>
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                <Users className="size-4" />
-              </span>
-              <Input
-                placeholder="e.g. 1, 2, 3  (comma-separated user IDs)"
-                {...register("user_ids")}
-                className="pl-10 h-11 border-slate-200 dark:border-slate-800 bg-transparent rounded-xl focus-visible:ring-1 focus-visible:ring-slate-300"
-              />
-            </div>
+            <Controller
+              name="user_ids"
+              control={control}
+              render={({ field }) => (
+                <MultiSelectDropdown
+                  options={memberOptions}
+                  selected={field.value}
+                  onChange={field.onChange}
+                  placeholder="Select assignees"
+                  emptyText="No team members found"
+                />
+              )}
+            />
             <p className="mt-1 text-xs text-muted-foreground pl-1">
-              Leave blank to assign to user #1
+              Leave empty to assign to user #1
             </p>
           </div>
 
