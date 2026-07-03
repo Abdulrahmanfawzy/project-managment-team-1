@@ -2,6 +2,35 @@ import apiClient from "@/services/ApiClient";
 
 // ── Response types ──────────────────────────────────────────────────────────
 
+export interface ProfileCounts {
+  tasks: number;
+  teams: number;
+  projects: number;
+}
+
+export interface Profile {
+  id: number;
+  name: string;
+  email: string;
+  phone: string | null;
+  country_code: string | null;
+  full_phone: string | null;
+  about: string | null;
+  job_title: string | null;
+  experience_years: number;
+  availability_status: string;
+  current_team: string | null;
+  current_project: string | null;
+  teams: { id: number; name: string }[];
+  roles: { id: number; name: string }[] | string[];
+  counts: ProfileCounts;
+  files: ProfileFile[];
+  email_verified_at: string | null;
+  created_at: string;
+  updated_at: string;
+  [key: string]: unknown;
+}
+
 export interface ProfileFile {
   id: number;
   name: string;
@@ -59,6 +88,28 @@ export interface PaginatedResponse<T> {
 }
 
 // ── API calls ───────────────────────────────────────────────────────────────
+
+/** GET /profile — the authenticated user's own profile */
+export const getProfile = () =>
+  apiClient.get<{ data: Profile } | Profile>("/profile");
+
+/** Body accepted by `PUT /profile`. */
+export interface UpdateProfilePayload {
+  name: string;
+  email: string;
+  phone?: string | null;
+  country_code?: string | null;
+  about?: string | null;
+  job_title?: string | null;
+  experience_years?: number;
+  availability_status?: string;
+  current_team_id?: number | null;
+  current_project_id?: number | null;
+}
+
+/** PUT /profile — update the authenticated user's profile; returns the fresh record. */
+export const updateProfile = (payload: UpdateProfilePayload) =>
+  apiClient.put<{ data: Profile } | Profile>("/profile", payload);
 
 /** GET /profile/files — no pagination */
 export const getProfileFiles = () =>
