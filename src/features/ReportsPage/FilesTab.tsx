@@ -1,21 +1,25 @@
-import React from "react";
-import { Download } from "lucide-react";
+import { Download, Loader2 } from "lucide-react";
+import { useProfileFiles } from "./hooks/useProfileFiles";
+import type { ProfileFile } from "./api/profile.api";
 
-interface FileItem {
-  id: string;
-  name: string;
-  author: string;
-  size: string;
-  time: string;
+/** Format bytes into a human-readable string. */
+function formatSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-const MOCK_FILES: FileItem[] = Array.from({ length: 9 }, (_, index) => ({
-  id: `file-${index + 1}`,
-  name: "Design mockups",
-  author: "By Ahmed Hassan",
-  size: "6.4 MB",
-  time: "1h ago",
-}));
+/** Return a relative-time label from an ISO date string. */
+function timeAgo(iso: string): string {
+  const diff = Date.now() - new Date(iso).getTime();
+  const mins = Math.floor(diff / 60_000);
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  return `${days}d ago`;
+}
 
 // Custom PDF document icon with a folded corner and PDF label
 const PdfIcon = () => (
@@ -50,10 +54,41 @@ const PdfIcon = () => (
 );
 
 export default function FilesTab() {
+  const { data: rawData, isLoading, isError } = useProfileFiles();
+
+  // Normalise: the response might be `{ data: [...] }` (Laravel resource) or a plain array.
+  const files: ProfileFile[] = Array.isArray(rawData)
+    ? rawData
+    : (rawData as { data: ProfileFile[] } | undefined)?.data ?? [];
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="size-6 animate-spin text-brand" />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="flex items-center justify-center py-20 text-sm text-red-500">
+        Failed to load files. Please try again later.
+      </div>
+    );
+  }
+
+  if (files.length === 0) {
+    return (
+      <div className="flex items-center justify-center py-20 text-sm text-slate-400">
+        No files found.
+      </div>
+    );
+  }
+
   return (
     <div className="py-6 w-full">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {MOCK_FILES.map((file) => (
+        {files.map((file) => (
           <div
             key={file.id}
             className="flex items-center justify-between p-4 bg-white rounded-xl border border-slate-100 shadow-sm hover:shadow-md hover:border-slate-200 transition-all duration-300 group cursor-pointer"
@@ -65,22 +100,22 @@ export default function FilesTab() {
                 <span className="text-sm font-semibold text-slate-800 group-hover:text-blue-600 transition-colors duration-200">
                   {file.name}
                 </span>
-                <span className="text-xs text-slate-400 font-medium">
-                  {file.author}
-                </span>
                 <span className="text-[11px] text-slate-400 font-normal">
-                  {file.size} • {file.time}
+                  {formatSize(file.size)} • {timeAgo(file.created_at)}
                 </span>
               </div>
             </div>
 
             {/* Right section: Download action */}
-            <button
+            <a
+              href={file.path}
+              target="_blank"
+              rel="noopener noreferrer"
               className="p-2 hover:bg-slate-50 active:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-600 transition-colors duration-200"
               aria-label="Download file"
             >
               <Download size={18} />
-            </button>
+            </a>
           </div>
         ))}
       </div>

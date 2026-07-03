@@ -65,7 +65,20 @@ export default function AddTask({
     },
   });
 
-  const onSubmit = (values: FormValues) => {
+  // ── File upload state ─────────────────────────────────────────────────────
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setSelectedFiles(Array.from(e.target.files));
+      setUploadError(null);
+    }
+  };
+
+  const onSubmit = async (values: FormValues) => {
+    setIsSubmitting(true);
     // Parse comma-separated user IDs into a number array
     const userIds = values.user_ids
       ? values.user_ids
@@ -86,14 +99,38 @@ export default function AddTask({
         user_ids: userIds,
       },
       {
-        onSuccess: () => {
+        onSuccess: async (response) => {
+          // Laravel wraps the created resource in a `{ data: { … } }` envelope.
+          // apiClient.post already unwraps the axios layer (res.data), so
+          // `response` here is `{ data: ApiTask }`.
+          const createdTask = (response as unknown as { data: { id: number } }).data ?? response;
+
+          // Upload attached files (if any) after the task is created.
+          if (selectedFiles.length > 0) {
+            try {
+              const { uploadTaskFiles } = await import("../../api/tasks.api");
+              const baseUrl = import.meta.env.VITE_API_URL as string;
+              await uploadTaskFiles(baseUrl, createdTask.id, selectedFiles);
+            } catch (err) {
+              console.error("File upload failed:", err);
+              setUploadError("Task created, but file upload failed. Please try again.");
+              // Do not close the dialog — let the user see the error.
+              setIsSubmitting(false);
+              return;
+            }
+          }
+
           reset();
+          setSelectedFiles([]);
+          setUploadError(null);
+          setIsSubmitting(false);
           setOpen(false);
         },
         onError: (error) => {
           console.error("Create task failed:", error);
           // @ts-expect-error axios error shape
           console.error("Server said:", error?.response?.data);
+          setIsSubmitting(false);
         },
       },
     );
@@ -274,19 +311,57 @@ export default function AddTask({
             </p>
           </div>
 
-          {/* Add Task Files */}
+          {/* ── Add Task Files ──────────────────────────────────────────── */}
           <div className="space-y-1.5">
             <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider pl-1">
               Add Task Files
             </span>
-            <div className="border border-dashed border-slate-200 dark:border-slate-800 rounded-xl p-6 flex flex-col items-center justify-center gap-2 bg-slate-50/20 dark:bg-slate-900/10 cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-900/20 transition-colors">
+
+            {/* Hidden native file input */}
+            <input
+              id="task-file-upload"
+              type="file"
+              multiple
+              className="sr-only"
+              onChange={handleFileChange}
+            />
+
+            {/* Drop-zone / click target */}
+            <label
+              htmlFor="task-file-upload"
+              className="border border-dashed border-slate-200 dark:border-slate-800 rounded-xl p-6 flex flex-col items-center justify-center gap-2 bg-slate-50/20 dark:bg-slate-900/10 cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-900/20 transition-colors"
+            >
               <div className="size-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
                 <Upload className="size-4 text-muted-foreground" />
               </div>
               <p className="text-xs text-muted-foreground text-center">
-                Drag and drop files or click to upload
+                {selectedFiles.length > 0
+                  ? `${selectedFiles.length} file${selectedFiles.length > 1 ? "s" : ""} selected — click to change`
+                  : "Drag and drop files or click to upload"}
               </p>
-            </div>
+            </label>
+
+            {/* Selected file pills */}
+            {selectedFiles.length > 0 && (
+              <ul className="flex flex-wrap gap-1.5 pt-1">
+                {selectedFiles.map((file) => (
+                  <li
+                    key={file.name}
+                    className="inline-flex items-center gap-1 rounded-full bg-brand/10 px-2.5 py-0.5 text-[11px] font-medium text-brand"
+                  >
+                    <FileText className="size-3 shrink-0" />
+                    <span className="max-w-[140px] truncate">{file.name}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            {/* Upload error (only shown when task creation succeeded but upload failed) */}
+            {uploadError && (
+              <p className="text-sm text-amber-600 rounded-lg bg-amber-50 px-3 py-2">
+                {uploadError}
+              </p>
+            )}
           </div>
 
           {/* API error banner */}
@@ -301,10 +376,10 @@ export default function AddTask({
           <div className="pt-1">
             <Button
               type="submit"
-              disabled={createTask.isPending}
+              disabled={isSubmitting}
               className="w-full h-12 bg-brand hover:bg-brand/90 text-white rounded-xl font-semibold shadow-lg shadow-brand/10 cursor-pointer disabled:opacity-60"
             >
-              {createTask.isPending ? "Creating…" : "Create Task"}
+              {isSubmitting ? "Creating…" : "Create Task"}
             </Button>
           </div>
         </form>
