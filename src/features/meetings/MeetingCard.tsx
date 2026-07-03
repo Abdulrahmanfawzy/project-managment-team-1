@@ -14,8 +14,13 @@ export default function MeetingCard({
   highlighted = false,
 }: MeetingCardProps) {
   const navigate = useNavigate();
-  const avatarUrls = meeting.participants.map((p) => p.avatarUrl);
-  const extraCount = Math.max(0, meeting.participants.length - 2);
+  // Prefer the backend avatar; fall back to a generated one when absent.
+  const avatarUrls = meeting.participants.map(
+    (p) =>
+      p.avatar_url ??
+      `https://ui-avatars.com/api/?name=${encodeURIComponent(p.name)}&background=random&size=44`,
+  );
+  const extraCount = Math.max(0, meeting.participants.length - 3);
 
   const borderStyle = "border border-[#F3F4F6]";
 
@@ -33,7 +38,7 @@ export default function MeetingCard({
       </p>
 
       <p className="text-[11px] text-[#A6B2CF] font-medium">
-        {meeting.startTime} - {meeting.endTime} PM
+        {meeting.start_time} - {meeting.end_time}
       </p>
 
       <div className="flex items-center justify-between mt-0.5">

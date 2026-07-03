@@ -1,14 +1,19 @@
 import type { Meeting } from "./Types/meeting.types";
 import MeetingCard from "./MeetingCard";
-import { TIME_SLOTS, WEEK_DAYS } from "./data/mockMeetings";
+import { TIME_SLOTS, hourOf, type CalendarDay } from "./utils/calendar";
 
 interface CalendarGridProps {
+  days: CalendarDay[];
   meetings: Meeting[];
 }
 
-export default function CalendarGrid({ meetings }: CalendarGridProps) {
-  const getMeetingsAt = (dayIndex: number, timeSlot: string) =>
-    meetings.filter((m) => m.dayIndex === dayIndex && m.startTime === timeSlot);
+export default function CalendarGrid({ days, meetings }: CalendarGridProps) {
+  const getMeetingsAt = (dateStr: string, slot: string) => {
+    const slotHour = hourOf(slot);
+    return meetings.filter(
+      (m) => m.date === dateStr && hourOf(m.start_time) === slotHour,
+    );
+  };
 
   return (
     <div className="flex flex-col">
@@ -21,33 +26,21 @@ export default function CalendarGrid({ meetings }: CalendarGridProps) {
             {slot}
           </div>
 
-          {WEEK_DAYS.map((day, dayIndex) => {
-            const isToday = dayIndex === 0;
-            const dayMeetings = getMeetingsAt(dayIndex, slot);
+          {days.map((day) => {
+            const dayMeetings = getMeetingsAt(day.dateStr, slot);
 
             return (
               <div
-                key={dayIndex}
+                key={day.dateStr}
                 className={`p-3 flex flex-col gap-2 border-r border-[#F3F4F6] last:border-r-0 relative justify-center items-center ${
-                  isToday
+                  day.isToday
                     ? "bg-[#EEF3FF] !items-stretch !justify-start"
                     : "bg-transparent"
                 }`}
               >
-                {!isToday && (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none select-none z-0">
-                    <p className="text-[12px] font-medium text-slate-400/70 leading-tight">
-                      {day.label}
-                    </p>
-                    <p className="text-[14px] font-semibold text-slate-700/70">
-                      {day.date}
-                    </p>
-                  </div>
-                )}
-
                 {dayMeetings.map((meeting) => (
                   <div key={meeting.id} className="w-full z-10">
-                    <MeetingCard meeting={meeting} highlighted={isToday} />
+                    <MeetingCard meeting={meeting} highlighted={day.isToday} />
                   </div>
                 ))}
               </div>
