@@ -105,15 +105,25 @@ export default function ProfileEditForm({ onSuccess }: ProfileEditFormProps) {
       toast.error("Please select your current team and project.");
       return;
     }
+
+    // A full PUT replaces every field, so an empty input would wipe the stored
+    // value. Fall back to the current profile value when a field is left blank
+    // ("not filled" means "keep as-is"), so we never blank data unintentionally.
+    const keep = (input: string, current: string | null | undefined) =>
+      input.trim() !== "" ? input.trim() : (current ?? null);
+
     mutate(
       {
-        name: form.name.trim(),
-        email: form.email.trim(),
-        phone: form.phone.trim() || null,
-        country_code: form.country_code || null,
-        about: form.about.trim() || null,
-        job_title: form.job_title.trim() || null,
-        experience_years: Number(form.experience_years) || 0,
+        name: keep(form.name, profile?.name) ?? "",
+        email: keep(form.email, profile?.email) ?? "",
+        phone: keep(form.phone, profile?.phone),
+        country_code: form.country_code || profile?.country_code || null,
+        about: keep(form.about, profile?.about),
+        job_title: keep(form.job_title, profile?.job_title),
+        experience_years:
+          form.experience_years.trim() !== ""
+            ? Number(form.experience_years)
+            : profile?.experience_years ?? 0,
         availability_status: form.availability_status,
         current_team_id: Number(form.current_team_id),
         current_project_id: Number(form.current_project_id),
@@ -148,7 +158,7 @@ export default function ProfileEditForm({ onSuccess }: ProfileEditFormProps) {
           {/* Full Name */}
           <div className="flex flex-col gap-1.5">
             <Label className="text-xs font-bold text-slate-700">
-              Full Name
+              Full Name <span className="text-red-500">*</span>
             </Label>
             <div className="relative">
               <User
@@ -167,7 +177,7 @@ export default function ProfileEditForm({ onSuccess }: ProfileEditFormProps) {
           {/* Email Address */}
           <div className="flex flex-col gap-1.5">
             <Label className="text-xs font-bold text-slate-700">
-              Email Address
+              Email Address <span className="text-red-500">*</span>
             </Label>
             <div className="relative">
               <Mail
@@ -214,7 +224,7 @@ export default function ProfileEditForm({ onSuccess }: ProfileEditFormProps) {
           {/* Availability Status */}
           <div className="flex flex-col gap-1.5">
             <Label className="text-xs font-bold text-slate-700">
-              Availability Status
+              Availability Status <span className="text-red-500">*</span>
             </Label>
             <Select
               value={form.availability_status}
@@ -225,9 +235,7 @@ export default function ProfileEditForm({ onSuccess }: ProfileEditFormProps) {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="available">Available</SelectItem>
-                <SelectItem value="busy">Busy</SelectItem>
-                <SelectItem value="away">Away</SelectItem>
-                <SelectItem value="offline">Offline</SelectItem>
+                <SelectItem value="unavailable">Unavailable</SelectItem>
               </SelectContent>
             </Select>
           </div>
