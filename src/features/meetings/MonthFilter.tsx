@@ -1,27 +1,27 @@
+
 "use client";
 
 import { useState } from "react";
 import { ChevronDown, ChevronLeft, ChevronRight, Check } from "lucide-react";
+import type { FilterOption } from "./utils/calendar";
+import { FILTER_OPTIONS } from "./utils/calendar";
 
 interface MonthFilterProps {
   month: string;
-  filter?: string;
+  filter: FilterOption;
+  onFilterChange: (filter: FilterOption) => void;
   onPrev?: () => void;
   onNext?: () => void;
-  onToday?: () => void;
 }
 
 export default function MonthFilter({
   month,
-  filter: initialFilter = "This Week",
+  filter,
+  onFilterChange,
   onPrev,
   onNext,
-  onToday,
 }: MonthFilterProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedFilter, setSelectedFilter] = useState(initialFilter);
-
-  const options = ["Today", "This Week", "This Month", "Last Three Month", "This Year"];
 
   return (
     <div className="flex items-center justify-between mb-6 relative">
@@ -42,33 +42,30 @@ export default function MonthFilter({
           <ChevronRight size={18} className="text-[#1E1E2D]" />
         </button>
       </div>
-
       <div className="relative">
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="flex items-center gap-2 px-4 py-2 border border-[#F3F4F6] rounded-xl bg-white text-[13px] font-medium text-[#1E1E2D] hover:bg-gray-50 transition-all shadow-sm"
         >
-          {selectedFilter}
+          {filter}
           <ChevronDown size={16} className="text-[#556987]" />
         </button>
-
         {isOpen && (
           <>
             <div className="absolute right-0 mt-2 w-[180px] bg-white border border-[#F3F4F6] rounded-xl shadow-xl z-50 py-1.5 animate-in fade-in slide-in-from-top-2 duration-200">
-              {options.map((option) => (
+              {FILTER_OPTIONS.map((option) => (
                 <button
                   key={option}
                   onClick={() => {
-                    setSelectedFilter(option);
+                    onFilterChange(option);
                     setIsOpen(false);
-                    if (option === "Today") onToday?.();
                   }}
                   className="w-full flex items-center justify-between px-4 py-2 text-[13px] text-[#556987] hover:text-[#1E1E2D] hover:bg-[#F8FAFC] transition-colors text-left"
                 >
-                  <span className={selectedFilter === option ? "font-semibold text-[#1E1E2D]" : ""}>
+                  <span className={filter === option ? "font-semibold text-[#1E1E2D]" : ""}>
                     {option}
                   </span>
-                  {selectedFilter === option && (
+                  {filter === option && (
                     <Check size={14} className="text-[#005AFB]" />
                   )}
                 </button>
