@@ -16,4 +16,12 @@ export const meetingsApi = {
   /** POST /meetings — create a meeting (JSON body). */
   create: (payload: CreateMeetingPayload) =>
     apiClient.post<MeetingResponse>("/meetings", payload),
+
+  /** PUT /meetings/:id — update a meeting (JSON body). */
+  update: (id: number, payload: CreateMeetingPayload) =>
+    apiClient.put<MeetingResponse>(`/meetings/${id}`, payload),
+
+  /** DELETE /meetings/:id */
+  remove: (id: number) => apiClient.delete<MeetingResponse>(`/meetings/${id}`),
 };
+
