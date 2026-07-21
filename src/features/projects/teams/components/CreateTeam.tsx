@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { useParams } from "react-router-dom";
-import { Plus, Users, FileText } from "lucide-react";
+import { Plus, FileText } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -12,11 +12,16 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import MultiSelectDropdown, {
+  type MultiOption,
+} from "@/components/shared/MultiSelectDropdown";
+import { useTeams } from "@/features/Dashboard/hooks/UseTeams";
+import type { TeamWithMembers } from "@/features/meetings/Types/meeting.types";
 import { useCreateTeamForProject } from "../hooks/useCreateTeamForProject";
 
 type FormValues = {
   name: string;
-  user_ids: string; // comma-separated IDs entered by the user
+  user_ids: string[]; // selected member user IDs
 };
 
 export default function CreateTeam() {
@@ -24,23 +29,40 @@ export default function CreateTeam() {
   const { projectId } = useParams();
   const createTeam = useCreateTeamForProject();
 
+  // Member options = the members across all teams (deduped by user id).
+  const { data: teamsResp } = useTeams();
+  const memberOptions: MultiOption[] = (() => {
+    const teams: TeamWithMembers[] =
+      (teamsResp as { data?: TeamWithMembers[] })?.data ?? [];
+    const byId = new Map<number, MultiOption>();
+    for (const team of teams) {
+      for (const m of team.members) {
+        if (!byId.has(m.id)) {
+          byId.set(m.id, {
+            value: String(m.id),
+            label: m.name,
+            sublabel: m.email,
+            avatarUrl: m.avatar_url,
+          });
+        }
+      }
+    }
+    return [...byId.values()];
+  })();
+
   const {
     register,
     handleSubmit,
     reset,
+    control,
     formState: { errors },
   } = useForm<FormValues>({
-    defaultValues: { name: "", user_ids: "" },
+    defaultValues: { name: "", user_ids: [] },
   });
 
   const onSubmit = (values: FormValues) => {
-    // Parse comma-separated member IDs → number[] (mirrors the AddTask form).
-    const userIds = values.user_ids
-      ? values.user_ids
-          .split(",")
-          .map((s) => Number(s.trim()))
-          .filter((n) => !isNaN(n) && n > 0)
-      : [];
+    // Selected member IDs → number[].
+    const userIds = values.user_ids.map(Number).filter((n) => n > 0);
 
     createTeam.mutate(
       { projectId: Number(projectId), name: values.name, userIds },
@@ -90,21 +112,24 @@ export default function CreateTeam() {
             )}
           </div>
 
-          {/* Member IDs */}
+          {/* Members */}
           <div className="relative">
             <label className="absolute -top-2 left-3 bg-white dark:bg-slate-950 px-1 text-xs text-muted-foreground font-medium z-10">
-              Member IDs
+              Members
             </label>
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                <Users className="size-4" />
-              </span>
-              <Input
-                placeholder="e.g. 1, 2, 3  (comma-separated user IDs)"
-                {...register("user_ids")}
-                className="pl-10 h-11 border-slate-200 dark:border-slate-800 bg-transparent rounded-xl focus-visible:ring-1 focus-visible:ring-slate-300"
-              />
-            </div>
+            <Controller
+              name="user_ids"
+              control={control}
+              render={({ field }) => (
+                <MultiSelectDropdown
+                  options={memberOptions}
+                  selected={field.value}
+                  onChange={field.onChange}
+                  placeholder="Select members"
+                  emptyText="No members found"
+                />
+              )}
+            />
             <p className="mt-1 text-xs text-muted-foreground pl-1">
               Leave blank to create the team without members.
             </p>

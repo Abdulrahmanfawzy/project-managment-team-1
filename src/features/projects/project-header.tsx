@@ -13,12 +13,14 @@ const tabs = [
 
 export default function ProjectHeader() {
   const { projectId = "alpha" } = useParams();
-  const projectName = projectId.charAt(0).toUpperCase() + projectId.slice(1);
 
   // Real completion, computed from the project's tasks (same source as the
   // Overview gauge). Undefined while loading.
   const { data: details } = useProjectDetails(projectId);
   const completed = details?.projectCompletedPercentage;
+
+  // Prefer the project's real name; fall back to the URL id while loading.
+  const projectName = details?.name ?? projectId;
 
   return (
     <div className="bg-white px-6 pt-4">

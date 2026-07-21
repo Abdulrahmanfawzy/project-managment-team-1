@@ -7,3 +7,7 @@ export const login = async (data: any) => {
 export const registerUser = async (data: any) => {
   return await axiosInstance.post("/register", data);
 };
+
+export const logout = async () => {
+  return await axiosInstance.delete("/logout");
+};
